@@ -9,10 +9,10 @@ assignees: ''
 
 **Disclaimer:** 
 Please go through [existing issues](https://github.com/bitgapp/eqMac/issues?q=is%3Aopen+is%3Aissue+label%3A%22type%3A+bug%22) to avoid creating duplicates. If you found a similar issue please post a comment there. If you are uncertain your issue is related to others then create the issue. Obvious ignorance of this rule might get you blocked from posting new issues. Please tick the box below to show that you have followed the guideline.
-- [] I have checked for a similar issue and sure it hasn't been reported before.
+- [ ] I have checked for a similar issue and sure it hasn't been reported before.
 
 In many cases first recommendation is to update to latest version available even if it's still in beta, especially if version you are on is older than 6 months. Please tick the box below to show that you already did this and issue is still present.
-- [] I have enabled 'Beta'/'Beta Program' in eqMac settings and updated to latest version available at the time this issue is created.
+- [ ] I have enabled 'Beta'/'Beta Program' in eqMac settings and updated to latest version available at the time this issue is created.
 
 **Describe the bug**
 A clear and concise description of what the bug is.
