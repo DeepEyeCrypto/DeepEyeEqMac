@@ -1,7 +1,7 @@
 source 'https://cdn.cocoapods.org/'
 
 # Uncomment the next line to define a global platform for your project
-platform :osx, '10.13'
+platform :osx, '10.15'
 workspace 'eqMac.xcworkspace'
 use_frameworks!
 
@@ -33,6 +33,14 @@ target 'eqMac' do
   pod 'KeychainSwift', '~> 13.0'
   pod 'Zip', :git => 'https://github.com/bitgapp/Zip.git', :tag => '2.1.1'
   shared_pods
+
+  post_install do |installer|
+    installer.pods_project.targets.each do |target|
+      target.build_configurations.each do |config|
+        config.build_settings['MACOSX_DEPLOYMENT_TARGET'] = '10.15'
+      end
+    end
+  end
 
 end
 
