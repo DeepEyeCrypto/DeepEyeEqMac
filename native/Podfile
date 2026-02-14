@@ -5,13 +5,7 @@ platform :osx, '10.13'
 workspace 'eqMac.xcworkspace'
 use_frameworks!
 
-post_install do |installer|
-  installer.pods_project.targets.each do |target|
-    target.build_configurations.each do |config|
-      config.build_settings['MACOSX_DEPLOYMENT_TARGET'] = '10.12'
-    end
-  end
-end
+
 
 # ignore all warnings from all pods
 inhibit_all_warnings!
@@ -26,7 +20,7 @@ target 'eqMac' do
   project 'app/eqMac.xcodeproj'
 
   pod 'SwiftHTTP', '~> 3.0'
-  pod 'AMCoreAudio', :git => 'https://github.com/nodeful/SimplyCoreAudio.git', :commit => 'b312d1509ef863dea3ca56cfa3f57451de4ff721'
+  pod 'AMCoreAudio', :git => 'https://github.com/elzii/AMCoreAudio.git', :branch => 'master'
   pod 'WebViewJavascriptBridge', '~> 6.0'
 #  pod 'ReachabilitySwift'
   pod 'ReSwift', '~> 6.1'
