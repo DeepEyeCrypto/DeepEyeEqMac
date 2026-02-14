@@ -2,7 +2,7 @@
 
 > **"The Void Update"** - A complete rewrite of the UI in SwiftUI with professional DJ capabilities.
 
-![DeepEye Edition](https://img.shields.io/badge/Status-Stable-success) ![Version](https://img.shields.io/badge/Version-2.0.0-blue) ![SwiftUI](https://img.shields.io/badge/UI-SwiftUI-orange)
+![Build Status](https://github.com/DeepEyeCrypto/DeepEyeEqMac/actions/workflows/macos.yaml/badge.svg) ![Version](https://img.shields.io/badge/Version-2.0.0-blue) ![SwiftUI](https://img.shields.io/badge/UI-SwiftUI-orange)
 
 ## 🚀 Overview
 
