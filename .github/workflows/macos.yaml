@@ -20,9 +20,10 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
       
-      - name: Configure Git for private/repo dependencies
+      - name: Configure Git for specific dependencies
         run: |
-          git config --global url."https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/bitgapp/".insteadOf "https://github.com/bitgapp/"
+          git config --global url."https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/bitgapp/AMCoreAudio.git".insteadOf "https://github.com/bitgapp/AMCoreAudio.git"
+          git config --global url."https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/bitgapp/Zip.git".insteadOf "https://github.com/bitgapp/Zip.git"
           echo "GIT_TERMINAL_PROMPT=0" >> $GITHUB_ENV
 
       - name: Check Xcode Version
