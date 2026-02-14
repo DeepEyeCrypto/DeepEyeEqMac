@@ -14,24 +14,27 @@ permissions:
 jobs:
   build:
     name: Build macOS App
-    runs-on: macos-latest
+    runs-on: macos-13 # Explicitly use macOS 13 (Ventura) for stability
     
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
       
-      - name: Setup Xcode
-        uses: maxim-lobanov/setup-xcode@v1
-        with:
-          xcode-version: 'latest-stable'
+      # Use default Xcode for macos-13 (usually Xcode 14.3/15.0)
+      # Skipping setup-xcode action to avoid potential alias errors
+      - name: Check Xcode Version
+        run: xcodebuild -version
 
       - name: Install CocoaPods
         run: |
-          sudo gem install cocoapods
-          
+          gem install cocoapods --user-install
+          export PATH=$PATH:$HOME/.gem/ruby/2.6.0/bin
+        # GitHub runners usually have CocoaPods, but this ensures it.
+        # Alternatively, just run 'pod install' directly as it's often pre-installed.
+
       - name: Install Pods
         run: |
-          pod install
+          pod install --repo-update
         working-directory: ./native
 
       - name: Build App
@@ -44,8 +47,7 @@ jobs:
             CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO
         working-directory: ./native
 
-      # Archive and Export (Runs only on Tag)
-      - name: Archive App
+      - name: Archive App (Tag Only)
         if: startsWith(github.ref, 'refs/tags/v')
         run: |
           xcodebuild archive \
@@ -57,7 +59,8 @@ jobs:
             CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO
             
           cd ./build/eqMac.xcarchive/Products/Applications/
-          zip -r $GITHUB_WORKSPACE/eqMac-${{ github.ref_name }}.zip eqMac.app
+          # Use wildcards to be safe against folder naming differences
+          zip -r $GITHUB_WORKSPACE/eqMac-${{ github.ref_name }}.zip *.app
         working-directory: ./native
 
       - name: Upload Artifact
