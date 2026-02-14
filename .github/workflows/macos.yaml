@@ -28,7 +28,9 @@ jobs:
 
       # Use pre-installed CocoaPods on GitHub Runners
       - name: Install Pods
-        run: pod install --repo-update --verbose
+        run: |
+          rm -f Podfile.lock
+          pod install --repo-update --verbose
         working-directory: ./native
 
       - name: Build App
