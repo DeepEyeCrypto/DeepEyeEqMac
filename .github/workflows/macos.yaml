@@ -14,7 +14,7 @@ permissions:
 jobs:
   build:
     name: Build macOS App
-    runs-on: macos-13
+    runs-on: macos-14
     
     steps:
       - name: Checkout Code
