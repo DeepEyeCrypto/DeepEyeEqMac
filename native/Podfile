@@ -17,7 +17,7 @@ end
 inhibit_all_warnings!
 
 def shared_pods
-  pod 'STPrivilegedTask', :git => 'https://github.com/sveinbjornt/STPrivilegedTask.git', :commit => 'fdca677c77adb166a2be4c5ea9c7580a738c49c9'
+  pod 'STPrivilegedTask', '1.0.7'
 end
 
 project 'app/eqMac.xcodeproj'
@@ -26,7 +26,7 @@ target 'eqMac' do
   project 'app/eqMac.xcodeproj'
 
   pod 'SwiftHTTP', '~> 3.0'
-  pod 'AMCoreAudio', :git => 'https://github.com/rnine/AMCoreAudio.git', :commit => 'b312d1509ef863dea3ca56cfa3f57451de4ff721'
+  pod 'AMCoreAudio', '3.5'
   pod 'WebViewJavascriptBridge', '~> 6.0'
 #  pod 'ReachabilitySwift'
   pod 'ReSwift', '~> 6.1'
@@ -37,7 +37,7 @@ target 'eqMac' do
   pod 'SwiftyJSON', '~> 4.2'
   pod 'SwiftyUserDefaults', '4.0'
   pod 'KeychainSwift', '~> 13.0'
-  pod 'Zip', :git => 'https://github.com/bitgapp/Zip.git'
+  pod 'Zip', '2.1.1'
   shared_pods
 
 end
