@@ -22,7 +22,8 @@ jobs:
       
       - name: Configure Git for private/repo dependencies
         run: |
-          git config --global url."https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/".insteadOf "https://github.com/"
+          git config --global url."https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/bitgapp/".insteadOf "https://github.com/bitgapp/"
+          echo "GIT_TERMINAL_PROMPT=0" >> $GITHUB_ENV
 
       - name: Check Xcode Version
         run: xcodebuild -version
