@@ -14,11 +14,13 @@ permissions:
 jobs:
   build:
     name: Build macOS App
-    runs-on: macos-latest
+    runs-on: macos-13
     
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       
       - name: Check Xcode Version
         run: xcodebuild -version
