@@ -20,7 +20,7 @@ target 'eqMac' do
   project 'app/eqMac.xcodeproj'
 
   pod 'SwiftHTTP', '~> 3.0'
-  pod 'AMCoreAudio', :git => 'https://github.com/elzii/AMCoreAudio.git', :branch => 'master'
+  pod 'AMCoreAudio', :git => 'https://github.com/elzii/AMCoreAudio.git'
   pod 'WebViewJavascriptBridge', '~> 6.0'
 #  pod 'ReachabilitySwift'
   pod 'ReSwift', '~> 6.1'
