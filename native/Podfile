@@ -26,7 +26,7 @@ target 'eqMac' do
   project 'app/eqMac.xcodeproj'
 
   pod 'SwiftHTTP', '~> 3.0'
-  pod 'AMCoreAudio', '3.5'
+  pod 'AMCoreAudio', :git => 'https://github.com/rnine/SimplyCoreAudio.git', :tag => '3.4.0'
   pod 'WebViewJavascriptBridge', '~> 6.0'
 #  pod 'ReachabilitySwift'
   pod 'ReSwift', '~> 6.1'
