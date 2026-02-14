@@ -1,7 +1,7 @@
 {
   "name": "eqmac",
-  "version": "1.0.0",
-  "description": "eqMac Monorepo",
+  "version": "2.0.0",
+  "description": "DeepEye EqMac - AI Enhanced DJ Edition",
   "main": ".eslintrc.js",
   "private": true,
   "workspaces": {

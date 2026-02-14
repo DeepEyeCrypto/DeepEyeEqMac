@@ -15,9 +15,10 @@ public enum SourceType : String {
   //    case File = "File"
   //    case Input = "Input"
   case System = "System"
+  case Input = "Input"
   static let allValues = [
     //        File.rawValue,
-    //        Input.rawValue,
+    Input.rawValue,
     System.rawValue
   ]
 }
@@ -33,10 +34,31 @@ class Sources {
   var isReady = EmitterKit.Event<Void>()
 
   var system: SystemAudioSource!
+  var input: InputSource?
   
   init () {
     Console.log("Creating Sources")
     initializeSystem()
+  }
+  
+  func getAllInputDevices() -> [AudioDevice] {
+    return AudioDevice.allInputDevices()
+  }
+  
+  func setInputDevice(_ device: AudioDevice) {
+      self.source = .Input
+      self.input = InputSource(device: device)
+      
+      if let engine = Application.engine {
+          engine.changeInputDevice(device)
+      }
+  }
+  
+  func setSystemDevice() {
+      self.source = .System
+      if let engine = Application.engine {
+          engine.changeInputDevice(system.device)
+      }
   }
 
   static func getInputPermission (_ callback: @escaping () -> Void) {

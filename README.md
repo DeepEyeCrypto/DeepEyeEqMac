@@ -1,61 +1,82 @@
-<p align="center">
-  <img width="400" src="https://github.com/bitgapp/eqMac/raw/master/assets/logos/promo-dark.png"/>
-</p>
+# DeepEye EqMac v2.0 - AI Enhanced DJ Edition
 
-<p align="center">
-  <img width="1024" src="https://github.com/bitgapp/eqMac/raw/master/assets/screenshots/autoeq-promo.png"/>
-</p>
+> **"The Void Update"** - A complete rewrite of the UI in SwiftUI with professional DJ capabilities.
 
-<p align="center">
-  <a href="https://discord.eqmac.app"><img src="https://img.shields.io/badge/chat-discord-black?style=flat&logo=discord" alt="discord chat"></a>
-</p>
+![DeepEye Edition](https://img.shields.io/badge/Status-Stable-success) ![Version](https://img.shields.io/badge/Version-2.0.0-blue) ![SwiftUI](https://img.shields.io/badge/UI-SwiftUI-orange)
 
-**Notice: Currently the code in this repository corresponds to v1.3.2 of eqMac without any Pro Features and all the newer releases are done on a private fork. Having the Free parts of the app open sourced required too much time to maintain and split off.**
+## 🚀 Overview
 
-## Features
-### Current
-* `Free` System Audio Processing
-* `Free` Volume Booster
-* `Free` HDMI Volume Support
-* `Free` Volume Balance support for all devices (including HDMI)
-* `Free` Basic EQ - Bass, Mids, Treble control
-* `Free` Advanced EQ - Fixed 10 bands
-* `Pro` Expert EQ - Unlimited bands, fully customizable (Filter Type, Frequency, Gain, Bandwidth)
-* `Pro` Spectrum analyzer
-* `Free/Pro` [AutoEQ](https://github.com/jaakkopasanen/AutoEq?referrer=eqMac&referer=eqMac&utm_source=eqMac) Integration - Automatic Headphone Equalization from frequency responses. `Free` for Advanced EQ and `Pro` as part of the Expert EQ
-* `Pro` AudioUnit (AU) Hosting - add 3rd party effects to the Audio Pipeline
-* `Pro` Spatial Audio - simulate different listening environments like Concert Halls or Different sized Rooms.
-* `Pro` Volume Mixer - Apply different volume levels per each application
-* Custom UI - Fully customize the look and feel of eqMac by changing the User Interface Colors (`Pro`), Feature visibility (`Free`) and arrangement (Soon).
+**DeepEye EqMac** transforms the classic utility into a performance-grade audio tool. By replacing the legacy web-based UI with a native, hardware-accelerated **SwiftUI** interface, we've unlocked features previously impossible:
 
-### Roadmap
-Idea is to become the ultimate Audio toolbox for macOS
-* Input Audio Source - Apply effects to any device: guitar, microphone etc.
-* Virtual Output - Export the Adjusted audio to any application
-* Hotkeys - Control eqMac with Keyboard Shortcuts
-* Recorder - save any audio playback (System, Input device, File)
-* Remote control from your phone
-* Separate L/R Channel EQ - Fix hearing impairements 
-* API - Control all aspects of eqMac through a WebSocket API. Works with any programming language that supports WebSockets.
-* File playback and rendering - Apply effects to audio files and instantly render them
-* and more...
+- **Zero-Latency Control**: Knob twists interact directly with the C++ Audio Engine.
+- **60fps Visualization**: Metal/vDSP powered Spectrum Analyzer.
+- **Pro Audio Routing**: Seamless Input/Output switching and VST hosting.
 
-[Vote on the Features you want to see sooner](https://eqmac.app/#coming-soon)
+---
 
-## User support
-If you are a `Pro` customer I provide Customer Support through the Contact form on the website :)
-This project is heavily reliant on the whole community helping each other out. If you have an issue with eqMac please go through [Issues](https://github.com/bitgapp/eqMac/issues) to see if it's already being discussed, if not create a new one. Also you can [join our Discord](https://discord.eqmac.app), I'm there all the time and I like to chat with people. 
+## 🌟 Key Features
 
-## Technology
-eqMac was built using these technologies:
-* [App](https://github.com/bitgapp/eqMac/tree/master/native/app) - Native backend to the whole app. Responsible for audio processing, filesystem access, window management, API and general lifecycle of eqMac.
-* [UI](https://github.com/bitgapp/eqMac/tree/master/ui) - Web based user interface that is hosted remotely and thus allows for Over the Air (OTA) updates & bug fixes. Built with [Angular](https://angular.io/) + [TypeScript](https://www.typescriptlang.org/) and is cached for offline availability.
-* [Driver](https://github.com/bitgapp/eqMac/tree/master/native/driver) - System Audio loopback/passthrough device based on [Apple's Null Audio Server Driver Plug-in](https://developer.apple.com/documentation/coreaudio/creating_an_audio_server_driver_plug-in) example. One of the first Examples of a macOS System Capture drivers written in Swift. The driver grabs the system audio stream and sends it to the app through a secure memory tunnel. eqMac can grab this stream, process it and send to the appropriate audio device. The driver runs in User space instead of Kernel like the previous drivers (i.e SoundFlower), which means it's much more secure and stable.
+### 🎛 The DJ Engine
 
-## Credits
+- **3-Band Kill EQ**: Dedicated Low/Mid/Hi knobs with "Kill Switches" (-24dB cut).
+- **Morphing Filter**: A single knob that sweeps from Low Pass to High Pass (Pioneer DJ style).
+- **Brickwall Limiter**: Safety dynamics processor to prevent clipping at high volumes.
 
-[@nodeful](https://github.com/nodeful) - Creator and Developer of eqMac
+### 🔌 Studio Connectivity
 
-[@titanicbobo](https://github.com/titanicbobo) - For the [Big Sur icon design](https://github.com/bitgapp/eqMac/blob/master/assets/icon/icon.svg)
+- **Input Routing**: Switch between **System Audio** (Loopback) and **Hardware Inputs** (Microphone, Line-In).
+- **VST/AU Hosting**: Load any macOS Audio Unit effect (Reverb, Delay, Distortion) directly into the chain.
+- **Sidechain Ducking**: Automatically lower the music volume when you speak (Talkover).
 
-[Max Heim](https://github.com/0bmxa) - For his research and work on creating the first Swift based Audio Server Plug-in Driver - [Pancake](https://github.com/0bmxa/Pancake)
+### 🎹 Hardware Control
+
+- **MIDI Mapping**: Connect any USB MIDI Controller.
+  - **CC 1**: Master Volume
+  - **CC 2**: DJ Filter
+  - **CC 3/4/5**: Low / Mid / High EQ
+
+---
+
+## 🛠 Installation & Build
+
+### Prerequisites
+
+- Xcode 13+
+- macOS 11.0 (Big Sur) or later.
+- CocoaPods (`sudo gem install cocoapods`)
+
+### Build Instructions
+
+1. **Clone & Install**:
+
+   ```bash
+   git clone https://github.com/your-repo/DeepEyeEqMac.git
+   cd DeepEyeEqMac/native/app
+   pod install
+   ```
+
+2. **Open Workspace**:
+   Open `eqMac.xcworkspace` (NOT the .xcodeproj).
+3. **Run**:
+   Select the `eqMac` scheme and press **Cmd+R**.
+
+---
+
+## 🏗 Architecture
+
+The project has been modernized from a Hybrid (Electron-like) app to a Native macOS App:
+
+- **Legacy**: Angular (JS) -> WebSocket -> C++ Engine.
+- **DeepEye (v2.0)**: **SwiftUI** -> **AppModel (Combine)** -> **C++ Engine**.
+
+### Core Files
+
+- `DeepEyeRoot.swift`: The main UI composition.
+- `AppModel.swift`: The brain connecting UI to Audio.
+- `Engine.swift`: The enhanced AVAudionEngine wrapper.
+- `PluginManager.swift`: VST/AU Scanner and Host.
+- `MIDIManager.swift`: CoreMIDI implementation.
+
+---
+
+*Built with ❤️ by the DeepEye Agentic AI Team.*
