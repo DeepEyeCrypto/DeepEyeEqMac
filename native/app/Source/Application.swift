@@ -19,7 +19,6 @@ import ServiceManagement
 import ReSwift
 import Sparkle
 import Shared
-import SwiftUI
 
 enum VolumeChangeDirection: String {
   case UP = "UP"
@@ -49,11 +48,8 @@ class Application {
 
   static var settings: Settings!
     
-    
   static var ui: UI!
     
-    
-
   static var dataBus: ApplicationDataBus!
   static let error = EmitterKit.Event<String>()
   
@@ -77,25 +73,6 @@ class Application {
   
   static var equalizersTypeChangedListener: EventListener<EqualizerType>?
 
-
-  static var deepEyeWindow: NSWindow?
-
-  static func showDeepEye() {
-      let rootView = DeepEyeRoot()
-      let controller = NSHostingController(rootView: rootView)
-      let window = NSWindow(contentViewController: controller)
-      window.title = "DeepEye EqMac"
-      window.styleMask = [.titled, .closable, .miniaturizable, .fullSizeContentView]
-      window.titlebarAppearsTransparent = true
-      window.isMovableByWindowBackground = true
-      window.backgroundColor = NSColor(red: 0.04, green: 0.04, blue: 0.04, alpha: 1.0)
-      window.center()
-      
-      deepEyeWindow = window
-      deepEyeWindow?.makeKeyAndOrderFront(nil)
-      NSApp.activate(ignoringOtherApps: true)
-  }
-
   static public func start () {
     if (!Constants.DEBUG) {
       setupCrashReporting()
@@ -116,8 +93,7 @@ class Application {
         setupListeners()
 
         self.setupUI {
-            // DEEPEYE: Launch SwiftUI Interface
-            self.showDeepEye()
+            // UI Setup Complete
         }
       }
     }

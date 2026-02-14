@@ -418,9 +418,9 @@ class UI: StoreSubscriber {
     }
 
     func loadLocal () {
-      Console.log("Loading Local UI")
-      unarchiveZip()
-      let url = URL(string: "\(localPath)/index.html")!
+      Console.log("Loading Local UI (Antigravity Migration)")
+      // Migration: Load directly from source
+      let url = URL(fileURLWithPath: "/Users/enayat/Documents/DeepEyeEqMac/native/ui/index.html")
       startUILoad(url)
     }
 

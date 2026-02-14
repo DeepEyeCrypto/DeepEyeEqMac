@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DeepEye EqMac</title>
+    <style>
+        :root {
+            --bg-color: #1a1a1a;
+            --surface-color: #2a2a2a;
+            --accent-color: #00d9ff;
+            --text-color: #e0e0e0;
+            --knob-size: 80px;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            overflow: hidden;
+            display: grid;
+            grid-template-rows: 40px 1fr 60px;
+            height: 100vh;
+            user-select: none;
+        }
+
+        /* Header */
+        header {
+            background-color: var(--surface-color);
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            border-bottom: 1px solid #333;
+            -webkit-app-region: drag;
+        }
+
+        .brand {
+            font-weight: 800;
+            letter-spacing: 2px;
+            color: var(--accent-color);
+            text-shadow: 0 0 10px rgba(0, 217, 255, 0.5);
+            margin-right: auto;
+        }
+
+        /* Main Content */
+        main {
+            display: flex;
+            flex-direction: column;
+            padding: 16px;
+            gap: 16px;
+        }
+
+        .visualizer-container {
+            flex: 1;
+            background: linear-gradient(180deg, rgba(0,0,0,0.2) 0%, rgba(0,217,255,0.05) 100%);
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            position: relative;
+            overflow: hidden;
+        }
+
+        canvas#spectrum {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0; 
+            left: 0;
+        }
+
+        .dj-controls {
+            display: flex;
+            justify-content: space-around;
+            height: 120px;
+        }
+
+        .knob-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .knob {
+            width: 60px; 
+            height: 60px;
+            border-radius: 50%;
+            background: conic-gradient(var(--accent-color) var(--val, 50%), #333 0%);
+            position: relative;
+            box-shadow: 0 0 15px rgba(0,217,255,0.1);
+        }
+
+        .knob::after {
+            content: '';
+            position: absolute;
+            top: 10%; left: 10%; width: 80%; height: 80%;
+            background: var(--surface-color);
+            border-radius: 50%;
+        }
+
+        .label {
+            font-size: 10px;
+            color: #888;
+            letter-spacing: 1px;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--surface-color);
+            border-top: 1px solid #333;
+            display: flex;
+            align-items: center;
+            padding: 0 24px;
+            gap: 16px;
+        }
+
+        .volume-slider {
+            flex: 1;
+            -webkit-appearance: none;
+            background: #444;
+            height: 4px;
+            border-radius: 2px;
+        }
+
+        .volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px; height: 16px;
+            background: var(--accent-color);
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 10px var(--accent-color);
+        }
+
+    </style>
+</head>
+<body>
+    <header>
+        <div class="brand">DEEPEYE</div>
+    </header>
+
+    <main>
+        <div class="visualizer-container">
+            <canvas id="spectrum"></canvas>
+        </div>
+
+        <div class="dj-controls">
+            <div class="knob-wrapper">
+                <div class="knob" style="--val: 50%"></div>
+                <span class="label">LOW</span>
+            </div>
+            <div class="knob-wrapper">
+                <div class="knob" style="--val: 50%"></div>
+                <span class="label">MID</span>
+            </div>
+            <div class="knob-wrapper">
+                <div class="knob" style="--val: 50%"></div>
+                <span class="label">HIGH</span>
+            </div>
+            <div class="knob-wrapper">
+                <div class="knob" style="--val: 0%"></div>
+                <span class="label">FILTER</span>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <span class="label">MASTER</span>
+        <input type="range" class="volume-slider" min="0" max="1" step="0.01" value="0.8">
+    </footer>
+
+    <script>
+        // Mock Visualizer Animation
+        const canvas = document.getElementById('spectrum');
+        const ctx = canvas.getContext('2d');
+        
+        function resize() {
+            canvas.width = canvas.parentElement.offsetWidth;
+            canvas.height = canvas.parentElement.offsetHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const bars = 40;
+            const barW = canvas.width / bars;
+            
+            for(let i=0; i<bars; i++) {
+                const h = Math.random() * canvas.height * 0.6;
+                const x = i * barW;
+                
+                const grad = ctx.createLinearGradient(0, canvas.height, 0, canvas.height-h);
+                grad.addColorStop(0, '#00d9ff');
+                grad.addColorStop(1, 'rgba(0, 217, 255, 0)');
+                
+                ctx.fillStyle = grad;
+                ctx.fillRect(x, canvas.height - h, barW - 2, h);
+            }
+            requestAnimationFrame(draw);
+        }
+        draw();
+    </script>
+</body>
+</html>
