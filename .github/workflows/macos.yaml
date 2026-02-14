@@ -14,12 +14,16 @@ permissions:
 jobs:
   build:
     name: Build macOS App
-    runs-on: macos-13
+    runs-on: macos-latest
     
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
       
+      - name: Configure Git for private/repo dependencies
+        run: |
+          git config --global url."https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/".insteadOf "https://github.com/"
+
       - name: Check Xcode Version
         run: xcodebuild -version
 
