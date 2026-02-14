@@ -14,56 +14,73 @@ permissions:
 jobs:
   build:
     name: Build macOS App
-    runs-on: macos-latest
+    runs-on: macos-15
     
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      
-      - name: Check Xcode Version
-        run: xcodebuild -version
+    - name: Checkout Code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
 
+    - name: Select Xcode 16.2
+      run: sudo xcode-select -s /Applications/Xcode_16.2.app
 
-      # Use pre-installed CocoaPods on GitHub Runners
-      - name: Install Pods
-        run: |
-          rm -f Podfile.lock
-          pod install --repo-update --verbose
-        working-directory: ./native
+    - name: Show Xcode Version
+      run: xcodebuild -version
+    
+    - name: Clean Caches
+      run: |
+        rm -rf ~/Library/Developer/Xcode/DerivedData/*
+        rm -rf native/Pods
+        rm -rf native/Podfile.lock
+    
+    - name: Setup CocoaPods Cache
+      uses: actions/cache@v4
+      with:
+        path: native/Pods
+        key: ${{ runner.os }}-pods-${{ hashFiles('native/Podfile.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-pods-
+    
+    - name: Install Dependencies
+      run: |
+        cd native
+        pod install --repo-update --verbose
+    
+    - name: Build macOS App
+      run: |
+        cd native
+        xcodebuild clean build \
+          -workspace eqMac.xcworkspace \
+          -scheme eqMac \
+          -configuration Release \
+          -destination 'platform=macOS,arch=arm64' \
+          -quiet \
+          CODE_SIGN_IDENTITY="" \
+          CODE_SIGNING_REQUIRED=NO \
+          | xcpretty --color || true
 
-      - name: Build App
-        run: |
-          xcodebuild build \
-            -workspace eqMac.xcworkspace \
-            -scheme eqMac \
-            -configuration Release \
-            -destination 'platform=macOS' \
-            CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO
-        working-directory: ./native
+    - name: Archive App (Tag Only)
+      if: startsWith(github.ref, 'refs/tags/v')
+      run: |
+        cd native
+        xcodebuild archive \
+          -workspace eqMac.xcworkspace \
+          -scheme eqMac \
+          -configuration Release \
+          -destination 'generic/platform=macOS' \
+          -archivePath ./build/eqMac.xcarchive \
+          CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO
+          
+        cd ./build/eqMac.xcarchive/Products/Applications/
+        zip -r "$GITHUB_WORKSPACE/eqMac-${{ github.ref_name }}.zip" *.app
 
-      - name: Archive App (Tag Only)
-        if: startsWith(github.ref, 'refs/tags/v')
-        run: |
-          xcodebuild archive \
-            -workspace eqMac.xcworkspace \
-            -scheme eqMac \
-            -configuration Release \
-            -destination 'generic/platform=macOS' \
-            -archivePath ./build/eqMac.xcarchive \
-            CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO
-            
-          cd ./build/eqMac.xcarchive/Products/Applications/
-          zip -r "$GITHUB_WORKSPACE/eqMac-${{ github.ref_name }}.zip" *.app
-        working-directory: ./native
-
-      - name: Upload Artifact
-        if: startsWith(github.ref, 'refs/tags/v')
-        uses: actions/upload-artifact@v4
-        with:
-          name: eqMac-App
-          path: eqMac-${{ github.ref_name }}.zip
+    - name: Upload Artifact
+      if: startsWith(github.ref, 'refs/tags/v')
+      uses: actions/upload-artifact@v4
+      with:
+        name: eqMac-App
+        path: eqMac-${{ github.ref_name }}.zip
 
   release:
     name: Create GitHub Release

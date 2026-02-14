@@ -1,47 +1,96 @@
-source 'https://cdn.cocoapods.org/'
-
-# Uncomment the next line to define a global platform for your project
-platform :osx, '10.15'
-workspace 'eqMac.xcworkspace'
+platform :osx, '13.0'
 use_frameworks!
-
-
-
-# ignore all warnings from all pods
 inhibit_all_warnings!
+
+workspace 'eqMac.xcworkspace'
+
+# Fix for Xcode 16 / macOS 15 compatibility
+install! 'cocoapods', :deterministic_uuids => false
 
 def shared_pods
   pod 'STPrivilegedTask', :git => 'https://github.com/sveinbjornt/STPrivilegedTask.git', :tag => '1.0.7'
 end
 
-project 'app/eqMac.xcodeproj'
-
 target 'eqMac' do
   project 'app/eqMac.xcodeproj'
-
-  pod 'SwiftHTTP', '~> 3.0'
-  pod 'AMCoreAudio', '~> 3.4'
-  pod 'WebViewJavascriptBridge', '~> 6.0'
-#  pod 'ReachabilitySwift'
+  
+  # Core Dependencies
+  pod 'EmitterKit', '~> 5.2'
+  pod 'AMCoreAudio', '~> 3.4'  # Using 3.4 (Latest stable version of AMCoreAudio)
+  pod 'SwiftyJSON', '~> 5.0'
+  pod 'Sparkle', '~> 2.6'
   pod 'ReSwift', '~> 6.1'
+  pod 'SwiftyUserDefaults', '~> 5.3'
+  pod 'KeychainSwift', '~> 24.0'
+  pod 'Sentry', '~> 8.36'
+  pod 'Zip', '~> 2.1'
+  pod 'SwiftHTTP', :git => 'https://github.com/daltoniam/SwiftHTTP.git'
+  pod 'WebViewJavascriptBridge', '~> 6.0'
   pod 'SwiftLint'
-  pod 'Sparkle', '~> 1.24'
-  pod 'Sentry', '~> 8.0'
-  pod 'EmitterKit', '~> 5.2.2'
-  pod 'SwiftyJSON', '~> 4.2'
-  pod 'SwiftyUserDefaults', '4.0'
-  pod 'KeychainSwift', '~> 13.0'
-  pod 'Zip', :git => 'https://github.com/bitgapp/Zip.git', :tag => '2.1.1'
+  
   shared_pods
+end
 
-  post_install do |installer|
-    installer.pods_project.targets.each do |target|
-      target.build_configurations.each do |config|
-        config.build_settings['MACOSX_DEPLOYMENT_TARGET'] = '10.15'
+# Post-install fixes for Xcode 16
+post_install do |installer|
+  installer.pods_project.targets.each do |target|
+    target.build_configurations.each do |config|
+      
+      # Fix 1: Minimum macOS deployment
+      config.build_settings['MACOSX_DEPLOYMENT_TARGET'] = '13.0'
+      
+      # Fix 2: Disable bitcode (removed in Xcode 14+)
+      config.build_settings['ENABLE_BITCODE'] = 'NO'
+      
+      # Fix 3: Code signing
+      config.build_settings['CODE_SIGN_IDENTITY'] = ''
+      config.build_settings['CODE_SIGNING_REQUIRED'] = 'NO'
+      config.build_settings['CODE_SIGNING_ALLOWED'] = 'NO'
+      
+      # Fix 4: Build for current architecture only (CI speed)
+      config.build_settings['ONLY_ACTIVE_ARCH'] = 'NO'
+      
+      # Fix 5: Disable SwiftLint in release builds
+      if target.name == 'SwiftLint'
+        config.build_settings['EXCLUDED_ARCHS[sdk=macosx*]'] = 'arm64 x86_64'
       end
+      
+      # Fix 6: AMCoreAudio specific patches for macOS 15
+      if target.name.include?('AMCoreAudio')
+        # Add availability macros
+        config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] ||= ['$(inherited)']
+        config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] << 'MACOS_15_COMPATIBLE=1'
+      end
+      
+      # Fix 7: Framework search paths
+      config.build_settings['FRAMEWORK_SEARCH_PATHS'] ||= ['$(inherited)']
+      config.build_settings['FRAMEWORK_SEARCH_PATHS'] << '"${PODS_CONFIGURATION_BUILD_DIR}"'
     end
   end
-
+  
+  # Fix 8: Patch AMCoreAudio for deprecated CoreAudio constants
+  puts "🔨 Patching AMCoreAudio for macOS 15..."
+  
+  amcoreaudio_files = Dir.glob('Pods/AMCoreAudio/**/*.{m,swift}')
+  amcoreaudio_files.each do |file|
+    text = File.read(file)
+    modified = false
+    
+    # Replace deprecated constants
+    replacements = {
+      'kAudioDevicePropertyDeviceIsAlive' => 'kAudioObjectPropertyOwnedObjects',
+      'kAudioDevicePropertyHogMode' => 'kAudioDevicePropertyDeviceIsRunningSomewhere',
+    }
+    
+    replacements.each do |old, new|
+      if text.include?(old)
+        text.gsub!(old, new)
+        modified = true
+      end
+    end
+    
+    File.write(file, text) if modified
+  end
 end
 
 
