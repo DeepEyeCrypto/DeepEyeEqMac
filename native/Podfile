@@ -26,7 +26,7 @@ target 'eqMac' do
   pod 'ReSwift', '~> 6.1'
   pod 'SwiftLint'
   pod 'Sparkle', '~> 1.24'
-  pod 'Sentry', '~> 9.4'
+  pod 'Sentry', '~> 8.0'
   pod 'EmitterKit', '~> 5.2.2'
   pod 'SwiftyJSON', '~> 4.2'
   pod 'SwiftyUserDefaults', '4.0'

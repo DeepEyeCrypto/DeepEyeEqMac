@@ -117,9 +117,11 @@ class Engine {
       let inputFormat = engine.inputNode.inputFormat(forBus: 0)
       engine.disconnectNodeInput(equalizers.active!.eq)
       engine.connect(engine.inputNode, to: equalizers.active!.eq, format: inputFormat)
+      
+      try! engine.start()
+  }
 
-
-    func insertPlugin(_ avUnit: AVAudioUnit) {
+  func insertPlugin(_ avUnit: AVAudioUnit) {
         Console.log("Inserting Plugin: \(avUnit.name)")
         engine.stop()
         
@@ -150,8 +152,8 @@ class Engine {
             }
         }
     }
-    self.engine.stop()
-  }
+    }
+
 
   deinit {
   }
