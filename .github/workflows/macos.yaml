@@ -31,8 +31,11 @@ jobs:
     - name: Show Xcode Version
       run: xcodebuild -version
 
-    - name: Clean DerivedData
-      run: rm -rf ~/Library/Developer/Xcode/DerivedData/*
+    - name: Clean DerivedData & Pods
+      run: |
+        rm -rf ~/Library/Developer/Xcode/DerivedData/*
+        rm -rf native/Pods
+        rm -rf native/Podfile.lock
 
     - name: Setup CocoaPods Cache
       uses: actions/cache@v4

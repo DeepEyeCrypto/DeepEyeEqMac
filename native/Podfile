@@ -12,6 +12,7 @@ def shared_pods
 end
 
 target 'eqMac' do
+  use_modular_headers!
   project 'app/eqMac.xcodeproj'
   
   # Core Dependencies
@@ -50,21 +51,20 @@ post_install do |installer|
       # Fix 4: Build for current architecture only (CI speed)
       config.build_settings['ONLY_ACTIVE_ARCH'] = 'NO'
       
-      # Fix 5: Disable SwiftLint in release builds
+      # Fix 5: Explicit Swift Version
+      config.build_settings['SWIFT_VERSION'] = '5.0'
+      
+      # Fix 6: Disable SwiftLint in release builds
       if target.name == 'SwiftLint'
         config.build_settings['EXCLUDED_ARCHS[sdk=macosx*]'] = 'arm64 x86_64'
       end
       
-      # Fix 6: AMCoreAudio specific patches for macOS 15
+      # Fix 7: AMCoreAudio specific patches for macOS 15
       if target.name.include?('AMCoreAudio')
         # Add availability macros
         config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] ||= ['$(inherited)']
         config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] << 'MACOS_15_COMPATIBLE=1'
       end
-      
-      # Fix 7: Framework search paths
-      config.build_settings['FRAMEWORK_SEARCH_PATHS'] ||= ['$(inherited)']
-      config.build_settings['FRAMEWORK_SEARCH_PATHS'] << '"${PODS_CONFIGURATION_BUILD_DIR}"'
     end
   end
   
@@ -92,5 +92,3 @@ post_install do |installer|
     File.write(file, text) if modified
   end
 end
-
-
