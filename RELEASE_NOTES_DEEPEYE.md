@@ -1,77 +1,57 @@
-# DeepEye EqMac - v2.0 "The DJ Update"
+# DeepEye EqMac - v2.1 "The Pro Audio Update"
 
 **Release Notes & Setup Guide**
 
 ## 🚀 Overview
 
-**DeepEye EqMac** is a total transformation of the classic eqMac application, rebuilding the interface from the ground up using **SwiftUI** and introducing professional **DJ Performance Features**.
-
-This release (Milestone 3) brings the application to a fully functional "Pro" state, suitable for live performance and advanced audio routing.
+**DeepEye EqMac v2.1** takes the native SwiftUI foundation established in v2.0 and supercharges it with professional audio processing capabilities. This release effectively completes the transition from a consumer utility to a pro-grade audio tool.
 
 ---
 
-## 🌟 New Features
+## 🌟 New Features in v2.1
 
-### 1. The "DeepEye" Interface
+### 1. 🎛 VST/AU Plugin Hosting (New!)
 
-- **Complete UI Overhaul**: Replaced the legacy Angular/Web UI with a high-performance, native macOS **SwiftUI** interface.
-- **"Void" Aesthetic**: A dark, contrast-heavy design system built for low-light environments (clubs/studios).
-- **Glassmorphism**: subtle blur effects and glowing controls for better visibility.
+- **Bring Your Own Effects**: You can now load any 3rd-party Audio Unit (AU) plugin directly into the DeepEye signal chain.
+- **Seamless Integration**: Plugins sit between the Equalizer and the Limiter, perfect for adding Reverb, Delay, or advanced Saturation to your output.
+- **Dedicated UI**: A new plugin selector allows for easy insertion and removal of effects.
 
-### 2. DJ Performance Tools
+### 2. 🎚 MIDI Mapping
 
-- **3-Band Kill EQ**:
-  - Dedicated **Low / Mid / Hi** knobs tailored for mixing.
-  - **Kill Switches**: Instantly cut (-24dB) any frequency band. Push again to restore.
-- **DJ Filter Color FX**:
-  - A single **FILTER** knob that morphs from **Low Pass** (turn left) to **High Pass** (turn right).
-  - Neutral center position (12 o'clock) bypasses the effect.
-- **Spectrum Analyzer**:
-  - Real-time, hardware-accelerated (Metal/vDSP) audio visualizer.
-  - 64-band frequency display running at 60fps.
+- **Hardware Control**: Connect your favorite MIDI DJ Controller (Pioneer, Numark, etc.).
+- **Zero-Config Mapping**:
+  - **CC 1**: Volume
+  - **CC 2**: DJ Filter (Low/High Pass)
+  - **CC 3**: Bass (Low)
+  - **CC 4**: Mid
+  - **CC 5**: Treble (High)
+- **Bi-Directional**: UI updates instantly when you turn hardware knobs.
 
-### 3. Pro Audio Capabilities
+### 3. 📉 Sidechain "Talkover"
 
-- **Input Routing**: Switch seamlessly between System Audio and Hardware Inputs.
-- **Brickwall Limiter**: dedicated safety dynamics processor.
-- **Preset Management**: Save/Load custom EQ curves.
-- **VST/AU Plugin Hosting**: Load 3rd party effects (Reverb, Delay) directly into the chain.
-- **MIDI Mapping**: Control EQ and Volume with hardware DJ controllers (CC1-CC5).
-- **Sidechain Ducking**: Automatically lower music volume when speaking into the microphone ("Talkover").
+- **Auto-Ducking**: The new **DUCK** button activates a sidechain compressor.
+- **Voice Priority**: When you speak into your microphone, the system audio (music) automatically lowers in volume, ensuring your voice is heard clearly. Perfect for podcasting or DJ announcements.
+
+### 4. ⚡️ Performance & Visualization
+
+- **Real-Time FFT**: The Spectrum Analyzer is now powered by Apple's `Accelerate` framework (vDSP), running on a background thread.
+- **High FPS**: Visualization is buttery smooth (60fps) without blocking the main UI thread.
+- **Zero Bloat**: The legacy Angular/Web UI has been completely removed, significantly reducing app size and memory footprint.
 
 ---
 
-## 🛠 Technical Details
+## 🛠 Technical Enhancements
 
-### Architecture
-
-- **AppModel Bridge**: A robust ViewModel layer connects the reactive SwiftUI frontend with the existing C++/Swift audio engine.
-- **Safety**:
-  - **Safe Start**: Volume is automatically capped at 50% on launch if it was left dangerously high.
-  - **Latency**: EQ and Filter changes bypass the state store for near-zero latency response.
-
-### New Files
-
-- `Native/App/Source/UI/DeepEye/`
-  - `DeepEyeRoot.swift`: Main Window composition.
-  - `AppModel.swift`: State management and Audio Engine bridge.
-  - `DeepKnob.swift`: Custom rotary control component.
-  - `SpectrumProvider.swift`: FFT Audio Analysis engine.
-- `Native/App/Source/Audio/Effects/`
-  - `DJFilter.swift`: Custom Dual-Mode Filter node.
-  - `Limiter.swift`: Brickwall Limiter node.
+- **Pure Native**: The app now runs on a pure SwiftUI lifecycle (`@main DeepEyeApp`), removing the legacy `AppDelegate` complexity.
+- **Optimized Engine**: Audio graph management has been refactored for better stability when switching devices.
 
 ---
 
 ## ⚡️ Quick Start
 
-1. **Launch**: Open `DeepEye EqMac`.
-2. **Route**: Ensure "System Audio" is selected in the top right menu for general music listening.
-3. **Play**: Start music on Spotify/Apple Music.
-4. **Mix**:
-   - Drag the **FILTER** knob to sweep frequencies.
-   - Use **KILL** buttons to drop the bass.
-   - Save your perfect curve in the **Presets** menu.
+1. **Host Plugins**: Click the "+" icon in the effects section to load your favorite Reverb or Delay.
+2. **Connect MIDI**: Plug in a controller sending CC messages 1-5 to take control.
+3. **Duck**: Enable your mic input and hit "DUCK" to test the automatic voice-over attenuation.
 
 ---
 
