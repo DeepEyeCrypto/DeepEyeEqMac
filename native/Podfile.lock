@@ -11,11 +11,10 @@ PODS:
   - SwiftHTTP (3.0.1)
   - SwiftyJSON (5.0.2)
   - SwiftyUserDefaults (5.3.0)
-  - WebViewJavascriptBridge (6.0.3)
   - Zip (2.1.2)
 
 DEPENDENCIES:
-  - AMCoreAudio (from `https://github.com/rnine/SimplyCoreAudio.git`, tag `3.4`)
+  - AMCoreAudio (from `./AMCoreAudio.podspec`)
   - EmitterKit (~> 5.2)
   - KeychainSwift (~> 24.0)
   - ReSwift (~> 6.1)
@@ -25,7 +24,6 @@ DEPENDENCIES:
   - SwiftHTTP (from `https://github.com/daltoniam/SwiftHTTP.git`)
   - SwiftyJSON (~> 5.0)
   - SwiftyUserDefaults (~> 5.3)
-  - WebViewJavascriptBridge (~> 6.0)
   - Zip (~> 2.1)
 
 SPEC REPOS:
@@ -37,13 +35,11 @@ SPEC REPOS:
     - Sparkle
     - SwiftyJSON
     - SwiftyUserDefaults
-    - WebViewJavascriptBridge
     - Zip
 
 EXTERNAL SOURCES:
   AMCoreAudio:
-    :git: https://github.com/rnine/SimplyCoreAudio.git
-    :tag: '3.4'
+    :podspec: "./AMCoreAudio.podspec"
   STPrivilegedTask:
     :git: https://github.com/sveinbjornt/STPrivilegedTask.git
     :tag: 1.0.7
@@ -62,7 +58,7 @@ CHECKOUT OPTIONS:
     :git: https://github.com/daltoniam/SwiftHTTP.git
 
 SPEC CHECKSUMS:
-  AMCoreAudio: dc23ebb735541a90fc8167435ad25bfa5bff8b89
+  AMCoreAudio: 1018eca30cdaaeebc400d9260608afefeddd167e
   EmitterKit: e7a27b37118823d8ad413b8396f75e40d59f8cba
   KeychainSwift: 007c4647486e4563adca839cf02cef00deb3b670
   ReSwift: 929afd2c897f0d33c76c730710a31bb2d2a66713
@@ -72,9 +68,8 @@ SPEC CHECKSUMS:
   SwiftHTTP: d93ce9740f7728b5c39455a49f03bdfc8b1dc0f5
   SwiftyJSON: f5b1bf1cd8dd53cd25887ac0eabcfd92301c6a5a
   SwiftyUserDefaults: 63f80248cf5bfb3458825d9a78f2eb7e1293a040
-  WebViewJavascriptBridge: 7f5bc4d3581e672e8f32bd0f812d54bc69bb8e29
   Zip: b3fef584b147b6e582b2256a9815c897d60ddc67
 
-PODFILE CHECKSUM: 799db2793d78ceff8435b35c74f85b7ec51e5c65
+PODFILE CHECKSUM: 83e81f95b3d2a6fde67cc575c800128b0dc7b29e
 
 COCOAPODS: 1.16.2
