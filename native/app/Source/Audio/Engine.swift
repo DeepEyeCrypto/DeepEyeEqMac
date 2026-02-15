@@ -121,37 +121,66 @@ class Engine {
       try! engine.start()
   }
 
+  var activePlugin: AVAudioUnit?
+
   func insertPlugin(_ avUnit: AVAudioUnit) {
-        Console.log("Inserting Plugin: \(avUnit.name)")
-        engine.stop()
-        
-        engine.attach(avUnit)
-        
-        // Re-route: Filter -> Plugin -> Limiter
-        engine.disconnectNodeOutput(filter.node)
-        // engine.disconnectNodeInput(limiter.node) // Not strictly needed if overwriting connection
-        
-        engine.connect(filter.node, to: avUnit, format: format)
-        engine.connect(avUnit, to: limiter.node, format: format)
-        
-        do {
-            try engine.start()
-        } catch {
-            Console.log("Engine Start Failed: \(error)")
-        }
-        
-        // Attempt to show UI
-        avUnit.auAudioUnit.requestViewController { viewController in
-            DispatchQueue.main.async {
-                if let vc = viewController {
-                    let win = NSWindow(contentViewController: vc)
-                    win.title = avUnit.name
-                    win.styleMask = [.titled, .closable, .resizable]
-                    win.makeKeyAndOrderFront(nil)
-                }
-            }
-        }
+    Console.log("Inserting Plugin: \(avUnit.name)")
+    engine.stop()
+    
+    // Remove existing plugin if any
+    if let existing = activePlugin {
+      engine.disconnectNodeOutput(existing)
+      engine.detach(existing)
     }
+    
+    activePlugin = avUnit
+    engine.attach(avUnit)
+    
+    // Chain: Sidechain -> Plugin -> Limiter
+    // Disconnect Sidechain -> Limiter (or Sidechain -> OldPlugin)
+    engine.disconnectNodeOutput(sidechainNode)
+    
+    engine.connect(sidechainNode, to: avUnit, format: format)
+    engine.connect(avUnit, to: limiter.node, format: format)
+    
+    do {
+      try engine.start()
+    } catch {
+      Console.log("Engine Start Failed: \(error)")
+    }
+    
+    // Show Plugin UI
+    avUnit.auAudioUnit.requestViewController { viewController in
+      DispatchQueue.main.async {
+        if let vc = viewController {
+          let win = NSWindow(contentViewController: vc)
+          win.title = avUnit.name
+          win.styleMask = [.titled, .closable, .resizable]
+          win.makeKeyAndOrderFront(nil)
+        }
+      }
+    }
+  }
+
+  func removePlugin() {
+    guard let plugin = activePlugin else { return }
+    Console.log("Removing Plugin: \(plugin.name)")
+    engine.stop()
+    
+    engine.disconnectNodeOutput(plugin)
+    engine.disconnectNodeOutput(sidechainNode)
+    engine.detach(plugin)
+    activePlugin = nil
+    
+    // Restore Chain: Sidechain -> Limiter
+    engine.connect(sidechainNode, to: limiter.node, format: format)
+    
+    do {
+      try engine.start()
+    } catch {
+      Console.log("Engine Start Failed: \(error)")
+    }
+  }
 
 
 

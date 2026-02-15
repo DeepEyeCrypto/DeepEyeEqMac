@@ -9,6 +9,7 @@ import SwiftUI
 
 struct DeepEyeRoot: View {
     @EnvironmentObject var appModel: AppModel
+    @State private var showingPluginSelector = false
     
     var body: some View {
         VStack(spacing: 0) {
@@ -18,6 +19,16 @@ struct DeepEyeRoot: View {
                     .font(.custom("Modern-Bold", size: 18))
                     .foregroundColor(Color("DeepEyeTeal"))
                 Spacer()
+                Button(action: {
+                    showingPluginSelector = true
+                }) {
+                    Image(systemName: "dial.max")
+                        .foregroundColor(appModel.activePluginName != nil ? .blue : .gray)
+                }
+                .popover(isPresented: $showingPluginSelector) {
+                    PluginSelector(appModel: appModel, isPresented: $showingPluginSelector)
+                }
+                
                 Button(action: {
                     // Settings
                 }) {
