@@ -105,6 +105,19 @@
 			<key>isa</key>
 			<string>PBXBuildFile</string>
 		</dict>
+		<key>747AB3984D0043BF80EF4968</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>wrapper.framework</string>
+			<key>name</key>
+			<string>Accelerate.framework</string>
+			<key>path</key>
+			<string>System/Library/Frameworks/Accelerate.framework</string>
+			<key>sourceTree</key>
+			<string>SDKROOT</string>
+		</dict>
 		<key>78048A61265041600020AAD9</key>
 		<dict>
 			<key>isa</key>
@@ -585,6 +598,20 @@
 			<string>785E4F86274D187D003D6DB0</string>
 			<key>isa</key>
 			<string>PBXBuildFile</string>
+		</dict>
+		<key>8523062FFFDD478F97F4E5EE</key>
+		<dict>
+			<key>fileRef</key>
+			<string>747AB3984D0043BF80EF4968</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+			<key>settings</key>
+			<dict>
+				<key>ATTRIBUTES</key>
+				<array>
+					<string>Weak</string>
+				</array>
+			</dict>
 		</dict>
 		<key>896A6D438DAEE15F87C748E4</key>
 		<dict>
@@ -1747,6 +1774,7 @@ fi
 				<string>7810723826112C2B005DB609</string>
 				<string>78F28AD5274D25580005474D</string>
 				<string>78D8C3472569B7980084739C</string>
+				<string>8523062FFFDD478F97F4E5EE</string>
 			</array>
 			<key>isa</key>
 			<string>PBXFrameworksBuildPhase</string>
@@ -2965,6 +2993,7 @@ codesign --verbose --force --deep -o runtime --sign "$IDENTITY" "$LOCATION"
 				<string>E0370EB0200D68AB00DF4DBF</string>
 				<string>E0F661701FDC38B600252923</string>
 				<string>9C0FBD24DF0BA400D806B8AC</string>
+				<string>747AB3984D0043BF80EF4968</string>
 			</array>
 			<key>isa</key>
 			<string>PBXGroup</string>
