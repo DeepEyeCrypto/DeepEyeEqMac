@@ -60,9 +60,7 @@ jobs:
           -destination 'platform=macOS,arch=arm64' \
           CODE_SIGN_IDENTITY="" \
           CODE_SIGNING_REQUIRED=NO \
-          CODE_SIGNING_ALLOWED=NO \
-          COMPILER_INDEX_STORE_ENABLE=NO \
-          -quiet
+          CODE_SIGNING_ALLOWED=NO
 
     - name: Archive App (Tag/Dispatch Only)
       if: startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch'
@@ -77,7 +75,6 @@ jobs:
           CODE_SIGN_IDENTITY="" \
           CODE_SIGNING_REQUIRED=NO \
           CODE_SIGNING_ALLOWED=NO \
-          COMPILER_INDEX_STORE_ENABLE=NO \
           -quiet
 
     - name: Package App

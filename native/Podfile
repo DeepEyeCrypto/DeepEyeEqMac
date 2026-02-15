@@ -12,7 +12,6 @@ def shared_pods
 end
 
 target 'eqMac' do
-  use_modular_headers!
   project 'app/eqMac.xcodeproj'
   
   # Core Dependencies

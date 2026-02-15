@@ -1001,6 +1001,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 					"$(PROJECT_DIR)/Frameworks",
+					"${PODS_CONFIGURATION_BUILD_DIR}/AMCoreAudio",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1056,6 +1057,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 					"$(PROJECT_DIR)/Frameworks",
+					"${PODS_CONFIGURATION_BUILD_DIR}/AMCoreAudio",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
