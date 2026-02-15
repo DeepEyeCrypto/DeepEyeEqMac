@@ -647,18 +647,18 @@
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-eqMac/Pods-eqMac-frameworks.sh",
-				"${BUILT_PRODUCTS_DIR}/AMCoreAudio/AMCoreAudio.framework",
-				"${BUILT_PRODUCTS_DIR}/EmitterKit/EmitterKit.framework",
-				"${BUILT_PRODUCTS_DIR}/KeychainSwift/KeychainSwift.framework",
-				"${BUILT_PRODUCTS_DIR}/ReSwift/ReSwift.framework",
-				"${BUILT_PRODUCTS_DIR}/STPrivilegedTask/STPrivilegedTask.framework",
-				"${BUILT_PRODUCTS_DIR}/Sentry/Sentry.framework",
+				"${BUILT_PRODUCTS_DIR}/AMCoreAudio.framework",
+				"${BUILT_PRODUCTS_DIR}/EmitterKit.framework",
+				"${BUILT_PRODUCTS_DIR}/KeychainSwift.framework",
+				"${BUILT_PRODUCTS_DIR}/ReSwift.framework",
+				"${BUILT_PRODUCTS_DIR}/STPrivilegedTask.framework",
+				"${BUILT_PRODUCTS_DIR}/Sentry.framework",
 				"${PODS_ROOT}/Sparkle/Sparkle.framework",
-				"${BUILT_PRODUCTS_DIR}/SwiftHTTP/SwiftHTTP.framework",
-				"${BUILT_PRODUCTS_DIR}/SwiftyJSON/SwiftyJSON.framework",
-				"${BUILT_PRODUCTS_DIR}/SwiftyUserDefaults/SwiftyUserDefaults.framework",
-				"${BUILT_PRODUCTS_DIR}/WebViewJavascriptBridge/WebViewJavascriptBridge.framework",
-				"${BUILT_PRODUCTS_DIR}/Zip/Zip.framework",
+				"${BUILT_PRODUCTS_DIR}/SwiftHTTP.framework",
+				"${BUILT_PRODUCTS_DIR}/SwiftyJSON.framework",
+				"${BUILT_PRODUCTS_DIR}/SwiftyUserDefaults.framework",
+				"${BUILT_PRODUCTS_DIR}/WebViewJavascriptBridge.framework",
+				"${BUILT_PRODUCTS_DIR}/Zip.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
@@ -1004,20 +1004,7 @@
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"${PODS_CONFIGURATION_BUILD_DIR}/AMCoreAudio/AMCoreAudio.framework/Headers\"",
-					"\"${PODS_CONFIGURATION_BUILD_DIR}/AwaitKit/AwaitKit.framework/Headers\"",
-					"\"${PODS_CONFIGURATION_BUILD_DIR}/CocoaAsyncSocket/CocoaAsyncSocket.framework/Headers\"",
-					"\"${PODS_CONFIGURATION_BUILD_DIR}/Criollo/Criollo.framework/Headers\"",
-					"\"${PODS_CONFIGURATION_BUILD_DIR}/EmitterKit/EmitterKit.framework/Headers\"",
-					"\"${PODS_CONFIGURATION_BUILD_DIR}/KeychainSwift/KeychainSwift.framework/Headers\"",
-					"\"${PODS_CONFIGURATION_BUILD_DIR}/PromiseKit/PromiseKit.framework/Headers\"",
-					"\"${PODS_CONFIGURATION_BUILD_DIR}/ReSwift/ReSwift.framework/Headers\"",
-					"\"${PODS_CONFIGURATION_BUILD_DIR}/STPrivilegedTask/STPrivilegedTask.framework/Headers\"",
-					"\"${PODS_CONFIGURATION_BUILD_DIR}/Sentry/Sentry.framework/Headers\"",
-					"\"${PODS_CONFIGURATION_BUILD_DIR}/Swifter/Swifter.framework/Headers\"",
-					"\"${PODS_CONFIGURATION_BUILD_DIR}/SwiftyJSON/SwiftyJSON.framework/Headers\"",
-					"\"${PODS_CONFIGURATION_BUILD_DIR}/SwiftyUserDefaults/SwiftyUserDefaults.framework/Headers\"",
-					"\"${PODS_CONFIGURATION_BUILD_DIR}/WebViewJavascriptBridge/WebViewJavascriptBridge.framework/Headers\"",
+					"$(PROJECT_DIR)/Frameworks",
 					"$(SRCROOT)/OpenSSL/include",
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/Supporting Files/Info.plist";
@@ -1072,20 +1059,7 @@
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"${PODS_CONFIGURATION_BUILD_DIR}/AMCoreAudio/AMCoreAudio.framework/Headers\"",
-					"\"${PODS_CONFIGURATION_BUILD_DIR}/AwaitKit/AwaitKit.framework/Headers\"",
-					"\"${PODS_CONFIGURATION_BUILD_DIR}/CocoaAsyncSocket/CocoaAsyncSocket.framework/Headers\"",
-					"\"${PODS_CONFIGURATION_BUILD_DIR}/Criollo/Criollo.framework/Headers\"",
-					"\"${PODS_CONFIGURATION_BUILD_DIR}/EmitterKit/EmitterKit.framework/Headers\"",
-					"\"${PODS_CONFIGURATION_BUILD_DIR}/KeychainSwift/KeychainSwift.framework/Headers\"",
-					"\"${PODS_CONFIGURATION_BUILD_DIR}/PromiseKit/PromiseKit.framework/Headers\"",
-					"\"${PODS_CONFIGURATION_BUILD_DIR}/ReSwift/ReSwift.framework/Headers\"",
-					"\"${PODS_CONFIGURATION_BUILD_DIR}/STPrivilegedTask/STPrivilegedTask.framework/Headers\"",
-					"\"${PODS_CONFIGURATION_BUILD_DIR}/Sentry/Sentry.framework/Headers\"",
-					"\"${PODS_CONFIGURATION_BUILD_DIR}/Swifter/Swifter.framework/Headers\"",
-					"\"${PODS_CONFIGURATION_BUILD_DIR}/SwiftyJSON/SwiftyJSON.framework/Headers\"",
-					"\"${PODS_CONFIGURATION_BUILD_DIR}/SwiftyUserDefaults/SwiftyUserDefaults.framework/Headers\"",
-					"\"${PODS_CONFIGURATION_BUILD_DIR}/WebViewJavascriptBridge/WebViewJavascriptBridge.framework/Headers\"",
+					"$(PROJECT_DIR)/Frameworks",
 					"$(SRCROOT)/OpenSSL/include",
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/Supporting Files/Info.plist";
