@@ -41,8 +41,7 @@
 	<string>eqMac uses AppleEvents to automate some aspects of the setup process</string>
 	<key>NSHumanReadableCopyright</key>
 	<string>Copyright © 2017 Roman Kisil. All rights reserved.</string>
-	<key>NSMainStoryboardFile</key>
-	<string>Main</string>
+
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Microphone permission is used to capture Input Device and/or System Audio streams.</string>
 	<key>NSPrincipalClass</key>

@@ -21,6 +21,10 @@ class SpectrumModel: ObservableObject {
     // Buffers
     private var window: [Float] = []
     
+    // Concurrency
+    private let processingQueue = DispatchQueue(label: "com.deepeye.audio.fft", qos: .userInteractive)
+    private var timer: DispatchSourceTimer?
+    
     init() {
         setupWindow()
         startProcessing()
@@ -32,13 +36,21 @@ class SpectrumModel: ObservableObject {
     }
     
     func startProcessing() {
-        // Read from Engine buffer periodically (e.g. 30fps)
-        timer = Timer.scheduledTimer(withTimeInterval: 0.033, repeats: true) { [weak self] _ in
+        // Create timer on background queue
+        timer = DispatchSource.makeTimerSource(flags: [], queue: processingQueue)
+        timer?.schedule(deadline: .now(), repeating: .milliseconds(33)) // ~30fps
+        
+        timer?.setEventHandler { [weak self] in
             self?.processAudio()
         }
+        
+        timer?.resume()
     }
     
     private func processAudio() {
+        // Ensure engine exists (thread-safe check?)
+        // Application.engine is a global static, usually safe to read pointer but modify is dangerous.
+        // We only read.
         guard let engine = Application.engine else { return }
         
         // Read latest samples from CircularBuffer
@@ -132,7 +144,7 @@ class SpectrumModel: ObservableObject {
     }
     
     deinit {
-        timer?.invalidate()
+        timer?.cancel()
         vDSP_destroy_fftsetup(fftSetup)
     }
 }

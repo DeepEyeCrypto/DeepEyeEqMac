@@ -16,11 +16,11 @@ The v2.0 "DeepEye" release successfully established the SwiftUI foundation and c
 
 ## 🔧 Technical Debt / Refactoring
 
-- [ ] **Remove Angular**: Completely delete the legacy `www/` folder and `UI/` web view code to reduce app size.
+- [x] **Remove Angular**: Completely delete the legacy `www/` folder and `UI/` web view code to reduce app size. (Completed in v2.1)
 - [ ] **Pure SwiftUI Lifecycle**: Migrate from `AppDelegate` to `@main DeepEyeApp` (blueprint provided in `DeepEyeApp.swift`).
 - [ ] **Metal Visualization**: Upgrade `SpectrumProvider` from CoreGraphics `Canvas` to a custom `MetalKit` shader for 120fps fluid particles.
 
 ## 🐛 Known Considerations
 
-- **High CPU Usage**: The current FFT Analyzer runs on the main thread via Timer. Moving this to a background `DispatchSourceTimer` or `CADisplayLink` would optimize battery life.
+- [x] **High CPU Usage**: The FFT Analyzer now runs on a background `DispatchSourceTimer` to optimize battery life and UI responsiveness.
 - **Input Switching**: Switching inputs causes a brief audio dropout (Engine restart). Implementing `AVAudioEngine` format conversion on the fly would allow seamless switching.

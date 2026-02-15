@@ -1,2 +1,0 @@
-// Deprecated - Removed during migration to SwiftUI
-import Foundation
