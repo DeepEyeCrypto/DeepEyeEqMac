@@ -36,12 +36,12 @@ class Settings: StoreSubscriber {
       let showDockIcon = self.iconMode == .both || self.iconMode == .dock
       NSApp.setActivationPolicy(showDockIcon ? .regular : .accessory)
       let showStatusBarIcon = self.iconMode == .both || self.iconMode == .statusBar
-      UI.statusItem.item.isVisible = showStatusBarIcon
+      // Legacy UI.statusItem.item.isVisible = showStatusBarIcon
 
       let beforeWasInDock = oldValue == .both || oldValue == .dock
       if (beforeWasInDock && !showDockIcon) {
         // Means the dock icon has dissappeared and window would close
-        UI.show()
+        // Legacy UI.show()
       }
 
       if (!showStatusBarIcon && Application.store.state.ui.mode == .popover) {

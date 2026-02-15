@@ -38,7 +38,7 @@ class EventInterceptor: NSApplication {
       switch (event.characters) {
       case "w":
         if (commandPressed(event: event)) {
-          UI.close()
+          // Legacy UI.close()
         }
         break
       default:

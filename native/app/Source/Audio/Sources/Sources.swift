@@ -63,7 +63,7 @@ class Sources {
 
   static func getInputPermission (_ callback: @escaping () -> Void) {
     if !InputSource.hasPermission {
-      UI.show()
+      // Legacy UI.show()
       let title = "Microphone Usage Permission"
       Alert.confirm(
         title: title,

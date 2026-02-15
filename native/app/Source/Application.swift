@@ -48,9 +48,9 @@ class Application {
 
   static var settings: Settings!
     
-  static var ui: UI!
-    
-  static var dataBus: ApplicationDataBus!
+  // Legacy UI Properties Removed
+  // static var ui: UI!
+  // static var dataBus: ApplicationDataBus!
   static let error = EmitterKit.Event<String>()
   
   static var updater = SUUpdater(for: Bundle.main)!
@@ -92,9 +92,10 @@ class Application {
 
         setupListeners()
 
-        self.setupUI {
-            // UI Setup Complete
-        }
+        // setupUI handled by SwiftUI App Lifecycle
+        // self.setupUI {
+        //     // UI Setup Complete
+        // }
       }
     }
   }
@@ -154,7 +155,7 @@ class Application {
 
       if Outputs.isDeviceAllowed(device) {
         if ignoreEvents {
-          dataBus.send(to: "/outputs/selected", data: JSON([ "id": device.id ]))
+          // Legacy: dataBus.send(to: "/outputs/selected", data: JSON([ "id": device.id ]))
           return
         }
         Console.log("outputChanged: ", device, " starting PlayThrough")
@@ -399,6 +400,7 @@ class Application {
     audioPipelineIsRunning.emit()
   }
   
+  /* Legacy setupUI Removed
   private static func setupUI (_ completion: @escaping () -> Void) {
     Console.log("Setting up UI")
     ui = UI {
@@ -411,6 +413,7 @@ class Application {
     Console.log("Setting up Data Bus")
     dataBus = ApplicationDataBus(bridge: UI.bridge)
   }
+  */
   
   static var overrideNextVolumeEvent = false
   static func volumeChangeButtonPressed (direction: VolumeChangeDirection, quarterStep: Bool = false) {

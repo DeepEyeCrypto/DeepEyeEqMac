@@ -14,7 +14,6 @@ import EmitterKit
 import AMCoreAudio
 import Shared
 
-@NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate, SUUpdaterDelegate {
 
   var updateProcessed = EmitterKit.Event<Void>()
@@ -66,7 +65,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, SUUpdaterDelegate {
   }
   
   func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
-    UI.show()
+    // UI.show() removed
     return true
   }
   
@@ -76,14 +75,15 @@ class AppDelegate: NSObject, NSApplicationDelegate, SUUpdaterDelegate {
   
   func applicationDidBecomeActive(_ notification: Notification) {
 //    if (UI.hasLoaded) {
-//      UI.show()
+//      // UI.show()
 //    }
   }
 
   func applicationDidResignActive(_ notification: Notification) {
-    if UI.mode == .popover {
-      UI.close()
-    }
+    // Legacy: UI.close()
+    // if UI.mode == .popover {
+    //   UI.close()
+    // }
   }
   
   func updaterDidNotFindUpdate(_ updater: SUUpdater) {
