@@ -20,8 +20,8 @@ target 'eqMac' do
   pod 'WebViewJavascriptBridge', '~> 6.0'
   pod 'STPrivilegedTask', :git => 'https://github.com/sveinbjornt/STPrivilegedTask.git', :tag => '1.0.7'
 
-  # Fallback: Use original AMCoreAudio 3.4 from rnine's repo (before rename)
-  pod 'AMCoreAudio', :git => 'https://github.com/rnine/SimplyCoreAudio.git', :tag => '3.4'
+  # Use local podspec to fix missing source files in tag 3.4
+  pod 'AMCoreAudio', :podspec => './AMCoreAudio.podspec'
 end
 
 post_install do |installer|
