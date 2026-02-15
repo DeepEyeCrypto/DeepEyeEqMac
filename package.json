@@ -1,6 +1,6 @@
 {
   "name": "eqmac",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "DeepEye EqMac - AI Enhanced DJ Edition",
   "main": ".eslintrc.js",
   "private": true,
