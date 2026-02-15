@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -54,7 +55,7 @@
 
         .visualizer-container {
             flex: 1;
-            background: linear-gradient(180deg, rgba(0,0,0,0.2) 0%, rgba(0,217,255,0.05) 100%);
+            background: linear-gradient(180deg, rgba(0, 0, 0, 0.2) 0%, rgba(0, 217, 255, 0.05) 100%);
             border-radius: 8px;
             border: 1px solid rgba(255, 255, 255, 0.05);
             position: relative;
@@ -65,7 +66,7 @@
             width: 100%;
             height: 100%;
             position: absolute;
-            top: 0; 
+            top: 0;
             left: 0;
         }
 
@@ -83,18 +84,21 @@
         }
 
         .knob {
-            width: 60px; 
+            width: 60px;
             height: 60px;
             border-radius: 50%;
             background: conic-gradient(var(--accent-color) var(--val, 50%), #333 0%);
             position: relative;
-            box-shadow: 0 0 15px rgba(0,217,255,0.1);
+            box-shadow: 0 0 15px rgba(0, 217, 255, 0.1);
         }
 
         .knob::after {
             content: '';
             position: absolute;
-            top: 10%; left: 10%; width: 80%; height: 80%;
+            top: 10%;
+            left: 10%;
+            width: 80%;
+            height: 80%;
             background: var(--surface-color);
             border-radius: 50%;
         }
@@ -125,15 +129,16 @@
 
         .volume-slider::-webkit-slider-thumb {
             -webkit-appearance: none;
-            width: 16px; height: 16px;
+            width: 16px;
+            height: 16px;
             background: var(--accent-color);
             border-radius: 50%;
             cursor: pointer;
             box-shadow: 0 0 10px var(--accent-color);
         }
-
     </style>
 </head>
+
 <body>
     <header>
         <div class="brand">DEEPEYE</div>
@@ -170,6 +175,72 @@
     </footer>
 
     <script>
+        // Setup WebViewJavascriptBridge
+        function setupWebViewJavascriptBridge(callback) {
+            if (window.WebViewJavascriptBridge) { return callback(WebViewJavascriptBridge); }
+            if (window.WVJBCallbacks) { return window.WVJBCallbacks.push(callback); }
+            window.WVJBCallbacks = [callback];
+            var WVJBIframe = document.createElement('iframe');
+            WVJBIframe.style.display = 'none';
+            WVJBIframe.src = 'https://__bridge_loaded__';
+            document.documentElement.appendChild(WVJBIframe);
+            setTimeout(function() { document.documentElement.removeChild(WVJBIframe) }, 0)
+        }
+
+        setupWebViewJavascriptBridge(function(bridge) {
+            
+            // Initialize
+            bridge.callHandler('GET /volume', null, function(response) {
+                if(response.data && response.data.gain) {
+                    document.querySelector('.volume-slider').value = response.data.gain;
+                }
+            });
+
+            // Volume Control
+            const volumeSlider = document.querySelector('.volume-slider');
+            volumeSlider.addEventListener('input', (e) => {
+                const gain = parseFloat(e.target.value);
+                bridge.callHandler('SET /volume', { gain: gain });
+            });
+
+            // Knob Interaction
+            document.querySelectorAll('.knob').forEach((knob, index) => {
+                let isDragging = false;
+                let startY;
+                let startVal;
+
+                // Map index to EQ bands
+                const endpoints = ['/eq/low', '/eq/mid', '/eq/high', null]; // Index 3 is Filter (TODO)
+
+                // Get current value from style
+                let currentVal = 50; 
+                
+                knob.addEventListener('mousedown', (e) => {
+                    isDragging = true;
+                    startY = e.clientY;
+                    startVal = currentVal;
+                    document.body.style.cursor = 'ns-resize';
+                });
+
+                window.addEventListener('mousemove', (e) => {
+                    if (!isDragging) return;
+                    const deltaY = startY - e.clientY;
+                    currentVal = Math.min(100, Math.max(0, startVal + deltaY));
+                    knob.style.setProperty('--val', currentVal + '%');
+                    
+                    // Debounce/Throttle could be added here
+                    if (endpoints[index]) {
+                         bridge.callHandler('SET ' + endpoints[index], { gain: currentVal / 100 });
+                    }
+                });
+
+                window.addEventListener('mouseup', () => {
+                    isDragging = false;
+                    document.body.style.cursor = 'default';
+                });
+            });
+        });
+
         // Mock Visualizer Animation
         const canvas = document.getElementById('spectrum');
         const ctx = canvas.getContext('2d');
@@ -202,4 +273,5 @@
         draw();
     </script>
 </body>
+
 </html>

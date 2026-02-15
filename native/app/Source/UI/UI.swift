@@ -319,6 +319,47 @@ class UI: StoreSubscriber {
   
   static func setupBridge () {
     bridge = Bridge(webView: viewController.webView)
+    
+    // GET / SET Volume
+    bridge.on("GET /volume") { (data, res) in
+      res.send(JSON([ "gain": Application.output?.volume.gain ?? 1.0 ]))
+    }
+    
+    bridge.on("SET /volume") { (data, res) in
+      if let gain = data?["gain"].double {
+        Application.dispatchAction(VolumeAction.setGain(gain, false))
+        res.send(nil)
+      } else {
+        res.error("Invalid Gain")
+      }
+    }
+    
+    // EQ Controls (Hybrid Approach)
+    // We map Low/Mid/High knobs to Basic EQ bands
+    bridge.on("SET /eq/low") { (data, res) in
+      if let gain = data?["gain"].double {
+        // Map 0-1 to -24 to +24 dB
+        let db = (gain - 0.5) * 48
+        Application.dispatchAction(BasicEqualizerAction.setGain(db, 0)) // Bass
+        res.send(nil)
+      }
+    }
+    
+    bridge.on("SET /eq/mid") { (data, res) in
+      if let gain = data?["gain"].double {
+        let db = (gain - 0.5) * 48
+        Application.dispatchAction(BasicEqualizerAction.setGain(db, 1)) // Mid
+        res.send(nil)
+      }
+    }
+    
+    bridge.on("SET /eq/high") { (data, res) in
+      if let gain = data?["gain"].double {
+        let db = (gain - 0.5) * 48
+         Application.dispatchAction(BasicEqualizerAction.setGain(db, 2)) // Treble
+        res.send(nil)
+      }
+    }
   }
   
   // MARK: - State
