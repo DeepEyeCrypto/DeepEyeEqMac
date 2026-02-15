@@ -50,9 +50,12 @@ struct DeepEyeRoot: View {
                                 .frame(height: 120)
                                 .padding(.horizontal)
                             
-                            // Volume Knob
-                            DeepKnob(value: $appModel.volume, title: "Volume Boost")
-                                .padding()
+                            // Volume & Filter
+                            HStack(spacing: 40) {
+                                DeepKnob(value: $appModel.volume, title: "Volume")
+                                DeepKnob(value: $appModel.filter, title: "Filter")
+                            }
+                            .padding()
                             
                             Divider().background(Color.gray)
                             
