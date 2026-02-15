@@ -19,7 +19,7 @@ fileprivate struct VolumeDefault: DefaultCodableStrategy {
 
 struct ApplicationState: State {
   var settings = SettingsState()
-  var ui = UIState()
+
   var effects = EffectsState()
   @DefaultCodable<VolumeDefault> var volume = VolumeDefault.value
   @DefaultTrue var enabled = true
@@ -50,7 +50,7 @@ enum ApplicationAction: Action {
 func ApplicationStateReducer(action: Action, state: ApplicationState?) -> ApplicationState {
   var state = state ?? ApplicationState()
   state.settings = SettingsStateReducer(action: action, state: state.settings)
-  state.ui = UIStateReducer(action: action, state: state.ui)
+
   state.effects = EffectsStateReducer(action: action, state: state.effects)
   state.volume = VolumeStateReducer(action: action, state: state.volume)
 
