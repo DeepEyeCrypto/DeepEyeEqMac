@@ -11,7 +11,7 @@ import EmitterKit
 
 @main
 struct DeepEyeApp: App {
-    @NSApplicationDelegateAdaptor(AppDelegate.swift) var appDelegate
+    @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     
     // We can inject the AppModel here
     @StateObject var appModel = AppModel()
