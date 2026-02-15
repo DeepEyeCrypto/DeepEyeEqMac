@@ -58,8 +58,11 @@ post_install do |installer|
         config.build_settings['EXCLUDED_ARCHS[sdk=macosx*]'] = 'arm64 x86_64'
       end
       
-      # Fix 7: AMCoreAudio specific patches for macOS 15
+      # Fix 7: AMCoreAudio specific patches
       if target.name.include?('AMCoreAudio')
+        config.build_settings['DEFINES_MODULE'] = 'YES'
+        config.build_settings['SWIFT_INSTALL_OBJC_HEADER'] = 'NO'
+        
         # Add availability macros
         config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] ||= ['$(inherited)']
         config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] << 'MACOS_15_COMPATIBLE=1'

@@ -50,6 +50,11 @@ jobs:
         cd native
         pod install --repo-update --verbose
 
+    - name: Show Build Settings
+      run: |
+        cd native
+        xcodebuild -workspace eqMac.xcworkspace -scheme eqMac -configuration Release -showBuildSettings
+
     - name: Build App
       run: |
         cd native
