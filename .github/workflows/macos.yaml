@@ -23,16 +23,16 @@ jobs:
         fetch-depth: 0
 
     - name: Select Xcode 16.2
-      run: sudo xcode-select -s /Applications/Xcode_16.2.app
+      run: |
+        sudo xcode-select -s /Applications/Xcode_16.2.app || \
+        sudo xcode-select -s /Applications/Xcode_16.1.app || \
+        xcodebuild -version
 
     - name: Show Xcode Version
       run: xcodebuild -version
 
-    - name: Clean Caches
-      run: |
-        rm -rf ~/Library/Developer/Xcode/DerivedData/*
-        rm -rf native/Pods
-        rm -rf native/Podfile.lock
+    - name: Clean DerivedData
+      run: rm -rf ~/Library/Developer/Xcode/DerivedData/*
 
     - name: Setup CocoaPods Cache
       uses: actions/cache@v4
@@ -47,39 +47,68 @@ jobs:
         cd native
         pod install --repo-update --verbose
 
-    - name: Build & Archive App
+    - name: Build App
+      run: |
+        cd native
+        xcodebuild build \
+          -workspace eqMac.xcworkspace \
+          -scheme eqMac \
+          -configuration Release \
+          -destination 'platform=macOS,arch=arm64' \
+          CODE_SIGN_IDENTITY="" \
+          CODE_SIGNING_REQUIRED=NO \
+          CODE_SIGNING_ALLOWED=NO \
+          COMPILER_INDEX_STORE_ENABLE=NO \
+          -quiet
+
+    - name: Archive App (Tag/Dispatch Only)
+      if: startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch'
       run: |
         cd native
         xcodebuild archive \
           -workspace eqMac.xcworkspace \
           -scheme eqMac \
           -configuration Release \
-          -destination 'generic/platform=macOS' \
+          -destination 'platform=macOS,arch=arm64' \
           -archivePath ./build/eqMac.xcarchive \
           CODE_SIGN_IDENTITY="" \
           CODE_SIGNING_REQUIRED=NO \
-          CODE_SIGNING_ALLOWED=NO
+          CODE_SIGNING_ALLOWED=NO \
+          COMPILER_INDEX_STORE_ENABLE=NO \
+          -quiet
 
     - name: Package App
+      if: startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch'
       run: |
-        # Find the app and zip it
-        APP_PATH=$(find native/build/eqMac.xcarchive -name "eqMac.app" -type d | head -n 1)
+        # Use archive if available, otherwise look in DerivedData
+        if [ -d "native/build/eqMac.xcarchive" ]; then
+          APP_PATH=$(find native/build/eqMac.xcarchive -name "eqMac.app" -type d | head -n 1)
+        else
+          # Fallback to DerivedData/Build/Products
+          APP_PATH=$(find ~/Library/Developer/Xcode/DerivedData -name "eqMac.app" -type d -path "*/Release/*" | head -n 1)
+        fi
+        
         if [ -z "$APP_PATH" ]; then
-          echo "Error: eqMac.app not found in archive"
+          echo "Error: eqMac.app not found"
           exit 1
         fi
+        
         echo "Found app at: $APP_PATH"
         APP_NAME=$(basename "$APP_PATH")
         APP_DIR=$(dirname "$APP_PATH")
+        
         cd "$APP_DIR"
         zip -r "$GITHUB_WORKSPACE/DeepEyeEqMac.zip" "$APP_NAME"
 
     - name: Upload Build Artifact
+      if: always()
       uses: actions/upload-artifact@v4
       with:
         name: DeepEyeEqMac-macos
-        path: DeepEyeEqMac.zip
-        if-no-files-found: error
+        path: |
+          DeepEyeEqMac.zip
+          native/build/eqMac.xcarchive
+        if-no-files-found: warn
 
   release-macos:
     name: Create GitHub Release
@@ -95,7 +124,12 @@ jobs:
         path: .
 
     - name: Prepare Release Asset
-      run: mv DeepEyeEqMac.zip DeepEyeEqMac-${{ github.ref_name }}.zip
+      run: |
+        if [ -f "DeepEyeEqMac.zip" ]; then
+          mv DeepEyeEqMac.zip DeepEyeEqMac-${{ github.ref_name }}.zip
+        else
+          echo "No zip found to mv"
+        fi
 
     - name: Create Release
       uses: softprops/action-gh-release@v1
