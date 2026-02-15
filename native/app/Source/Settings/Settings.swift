@@ -44,10 +44,12 @@ class Settings: StoreSubscriber {
         // Legacy UI.show()
       }
 
+      /*
       if (!showStatusBarIcon && Application.store.state.ui.mode == .popover) {
         // Popover has nothing to attach to so need to go into Window mode
         Application.dispatchAction(UIAction.setMode(.window))
       }
+      */
     }
   }
 
