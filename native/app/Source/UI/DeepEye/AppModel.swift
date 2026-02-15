@@ -14,6 +14,12 @@ class AppModel: ObservableObject {
     @Published var isLoading: Bool = true
     @Published var statusMessage: String = "Ready"
     
+    // Audio State
+    @Published var volume: Double = 0.8
+    @Published var bass: Double = 0.5
+    @Published var mid: Double = 0.5
+    @Published var treble: Double = 0.5
+    
     init() {
         // Listen for Application events
         setupListeners()

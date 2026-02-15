@@ -17,7 +17,7 @@ struct DeepEyeRoot: View {
             HStack {
                 Text("DeepEye")
                     .font(.custom("Modern-Bold", size: 18))
-                    .foregroundColor(Color("DeepEyeTeal"))
+                    .foregroundColor(.deepEyeTeal) // Colors from DesignSystem
                 Spacer()
                 Button(action: {
                     showingPluginSelector = true
@@ -36,7 +36,7 @@ struct DeepEyeRoot: View {
                 }
             }
             .padding()
-            .background(Color("DeepEyeDarkBg"))
+            .background(Color.deepEyeDarkBg)
             
             // Main Content Area
             ZStack {
@@ -45,17 +45,24 @@ struct DeepEyeRoot: View {
                 } else {
                     ScrollView {
                         VStack(spacing: 20) {
-                            Text("Volume Boost")
-                            // Placeholder for Volume Knob
-                            Circle()
-                                .stroke(Color.gray, lineWidth: 3)
-                                .frame(width: 150, height: 150)
+                            // Visualization
+                            SpectrumView()
+                                .frame(height: 120)
+                                .padding(.horizontal)
                             
-                            Text("Equalizer")
-                            // Placeholder for EQ
-                            RoundedRectangle(cornerRadius: 8)
-                                .fill(Color.gray.opacity(0.2))
-                                .frame(height: 100)
+                            // Volume Knob
+                            DeepKnob(value: $appModel.volume, title: "Volume Boost")
+                                .padding()
+                            
+                            Divider().background(Color.gray)
+                            
+                            // 3-Band EQ
+                            HStack(spacing: 30) {
+                                DeepKnob(value: $appModel.bass, title: "Bass")
+                                DeepKnob(value: $appModel.mid, title: "Mid")
+                                DeepKnob(value: $appModel.treble, title: "Treble")
+                            }
+                            .padding()
                         }
                         .padding()
                     }
@@ -71,6 +78,6 @@ struct DeepEyeRoot: View {
             }
             .padding(10)
         }
-        .background(Color("DeepEyeBg"))
+        .background(Color.deepEyeBg)
     }
 }
