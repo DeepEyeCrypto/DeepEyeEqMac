@@ -48,9 +48,7 @@ class Application {
 
   static var settings: Settings!
     
-  // Legacy UI Properties Removed
-  // static var ui: UI!
-  // static var dataBus: ApplicationDataBus!
+
   static let error = EmitterKit.Event<String>()
   
   static var updater = SUUpdater(for: Bundle.main)!
@@ -400,20 +398,7 @@ class Application {
     audioPipelineIsRunning.emit()
   }
   
-  /* Legacy setupUI Removed
-  private static func setupUI (_ completion: @escaping () -> Void) {
-    Console.log("Setting up UI")
-    ui = UI {
-      setupDataBus()
-      completion()
-    }
-  }
-  
-  private static func setupDataBus () {
-    Console.log("Setting up Data Bus")
-    dataBus = ApplicationDataBus(bridge: UI.bridge)
-  }
-  */
+
   
   static var overrideNextVolumeEvent = false
   static func volumeChangeButtonPressed (direction: VolumeChangeDirection, quarterStep: Bool = false) {
