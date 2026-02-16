@@ -65,6 +65,8 @@ post_install do |installer|
       'kAudioDevicePropertyHogMode' => 'kAudioDevicePropertyDeviceIsRunningSomewhere',
       'import CoreAudio.AudioHardwareBase' => 'import CoreAudio',
       '@import CoreAudio.AudioHardware;' => '@import CoreAudio;',
+      'kAudioHardwareServiceDeviceProperty_VirtualMasterVolume' => 'kAudioHardwareServiceDeviceProperty_VirtualMainVolume',
+      'kAudioHardwareServiceDeviceProperty_VirtualMasterBalance' => 'kAudioHardwareServiceDeviceProperty_VirtualMainBalance',
     }
     replacements.each do |old, new|
       if text.include?(old)
