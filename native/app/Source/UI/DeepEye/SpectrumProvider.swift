@@ -13,7 +13,6 @@ import Accelerate
 class SpectrumModel: ObservableObject {
     @Published var amplitudes: [CGFloat] = Array(repeating: 0.1, count: 30)
     
-    private var timer: Timer?
     private let fftSize = 1024
     private lazy var log2n = vDSP_Length(log2(Float(fftSize)))
     private lazy var fftSetup = vDSP_create_fftsetup(log2n, FFTRadix(kFFTRadix2))!
@@ -23,7 +22,7 @@ class SpectrumModel: ObservableObject {
     
     // Concurrency
     private let processingQueue = DispatchQueue(label: "com.deepeye.audio.fft", qos: .userInteractive)
-    private var timer: DispatchSourceTimer?
+    private var dispatchTimer: DispatchSourceTimer?
     
     init() {
         setupWindow()
@@ -37,14 +36,14 @@ class SpectrumModel: ObservableObject {
     
     func startProcessing() {
         // Create timer on background queue
-        timer = DispatchSource.makeTimerSource(flags: [], queue: processingQueue)
-        timer?.schedule(deadline: .now(), repeating: .milliseconds(33)) // ~30fps
+        dispatchTimer = DispatchSource.makeTimerSource(flags: [], queue: processingQueue)
+        dispatchTimer?.schedule(deadline: .now(), repeating: .milliseconds(33)) // ~30fps
         
-        timer?.setEventHandler { [weak self] in
+        dispatchTimer?.setEventHandler { [weak self] in
             self?.processAudio()
         }
         
-        timer?.resume()
+        dispatchTimer?.resume()
     }
     
     private func processAudio() {
@@ -144,7 +143,7 @@ class SpectrumModel: ObservableObject {
     }
     
     deinit {
-        timer?.cancel()
+        dispatchTimer?.cancel()
         vDSP_destroy_fftsetup(fftSetup)
     }
 }

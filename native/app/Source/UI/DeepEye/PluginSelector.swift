@@ -29,7 +29,7 @@ struct PluginSelector: View {
                 }
             }
             .padding()
-            List(pluginManager.availablePlugins) { plugin in
+            List(pluginManager.availablePlugins) { (plugin: AudioPlugin) in
                 Button(action: {
                     appModel.loadPlugin(plugin)
                     isPresented = false
