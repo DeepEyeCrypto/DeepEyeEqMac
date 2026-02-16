@@ -63,6 +63,8 @@ post_install do |installer|
     replacements = {
       'kAudioDevicePropertyDeviceIsAlive' => 'kAudioObjectPropertyOwnedObjects',
       'kAudioDevicePropertyHogMode' => 'kAudioDevicePropertyDeviceIsRunningSomewhere',
+      'import CoreAudio.AudioHardwareBase' => 'import CoreAudio',
+      '@import CoreAudio.AudioHardware;' => '@import CoreAudio;',
     }
     replacements.each do |old, new|
       if text.include?(old)
