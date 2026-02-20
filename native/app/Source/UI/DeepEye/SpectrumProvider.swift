@@ -10,6 +10,8 @@ import Combine
 
 import Accelerate
 import AudioToolbox
+import Shared
+import AMCoreAudio
 
 class SpectrumModel: ObservableObject {
     @Published var amplitudes: [CGFloat] = Array(repeating: 0.1, count: 30)

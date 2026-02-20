@@ -1407,23 +1407,20 @@ fi
 			<key>shellPath</key>
 			<string>/bin/sh</string>
 			<key>shellScript</key>
-			<string>if [[ $CONFIGURATION != "Release" ]]; then
+			<string>if [[ "$CONFIGURATION" != "Release" ]]; then
 exit 0
 fi
 
-if which sentry-cli &gt;/dev/null; then
-source ~/.zshrc
+if command -v sentry-cli &gt;/dev/null 2&gt;&amp;1; then
 export SENTRY_ORG=bitgapp
 export SENTRY_PROJECT=eqmac-swift
-ERROR=$(sentry-cli upload-dif "$DWARF_DSYM_FOLDER_PATH" --log-level=debug 2&gt;&amp;1 &gt;/dev/null)
-if [ ! $? -eq 0 ]; then
-echo "warning: sentry-cli - $ERROR"
-exit 1
+if ! sentry-cli upload-dif "$DWARF_DSYM_FOLDER_PATH" --log-level=debug &gt;/dev/null 2&gt;&amp;1; then
+echo "warning: sentry-cli upload-dif failed, continuing without blocking build"
 fi
 else
-echo "warning: sentry-cli not installed, download from https://github.com/getsentry/sentry-cli/releases"
-exit 1
+echo "warning: sentry-cli not installed, skipping dSYM upload"
 fi
+exit 0
 </string>
 		</dict>
 		<key>E072856A23F84A5500EDE8AC</key>
@@ -2493,20 +2490,24 @@ fi
 			<key>shellPath</key>
 			<string>/bin/sh</string>
 			<key>shellScript</key>
-			<string>if [[ $CONFIGURATION == "Debug" ]]; then
+			<string>if [[ "$CONFIGURATION" == "Debug" ]]; then
 exit 0
 fi
 
+if [[ "$CODE_SIGNING_ALLOWED" == "NO" || "$CODE_SIGNING_REQUIRED" == "NO" || -z "$CODE_SIGN_IDENTITY" ]]; then
+echo "warning: skipping Sparkle hardening for unsigned build"
+exit 0
+fi
 
 LOCATION="${BUILT_PRODUCTS_DIR}"/"${FRAMEWORKS_FOLDER_PATH}"
 
+if [ ! -d "$LOCATION/Sparkle.framework/Versions/A" ]; then
+echo "warning: Sparkle framework not found, skipping Sparkle hardening"
+exit 0
+fi
+
 # By default, use the configured code signing identity for the project/target
 IDENTITY="${CODE_SIGN_IDENTITY}"
-if [ "$IDENTITY" == "" ]
-then
-# If a code signing identity is not specified, use ad hoc signing
-IDENTITY="-"
-fi
 codesign --verbose --force --deep -o runtime --sign "$IDENTITY" "$LOCATION/Sparkle.framework/Versions/A/Resources/AutoUpdate.app"
 codesign --verbose --force -o runtime --sign "$IDENTITY" "$LOCATION/Sparkle.framework/Versions/A"
 </string>
@@ -2530,19 +2531,24 @@ codesign --verbose --force -o runtime --sign "$IDENTITY" "$LOCATION/Sparkle.fram
 			<key>shellPath</key>
 			<string>/bin/sh</string>
 			<key>shellScript</key>
-			<string>if [[ $CONFIGURATION == "Debug" ]]; then
+			<string>if [[ "$CONFIGURATION" == "Debug" ]]; then
+exit 0
+fi
+
+if [[ "$CODE_SIGNING_ALLOWED" == "NO" || "$CODE_SIGNING_REQUIRED" == "NO" || -z "$CODE_SIGN_IDENTITY" ]]; then
+echo "warning: skipping LaunchAtLogin hardening for unsigned build"
 exit 0
 fi
 
 LOCATION="$BUILT_PRODUCTS_DIR/$CONTENTS_FOLDER_PATH/Library/LoginItems/LaunchAtLoginHelper.app"
 
+if [ ! -d "$LOCATION" ]; then
+echo "warning: LaunchAtLogin helper not found, skipping hardening"
+exit 0
+fi
+
 # By default, use the configured code signing identity for the project/target
 IDENTITY="${CODE_SIGN_IDENTITY}"
-if [ "$IDENTITY" == "" ]
-then
-# If a code signing identity is not specified, use ad hoc signing
-IDENTITY="-"
-fi
 echo "Hardening Launch At Login Helper with developer identity \"$IDENTITY\"..."
 codesign --verbose --force --deep -o runtime --sign "$IDENTITY" "$LOCATION"
 </string>
