@@ -55,8 +55,15 @@ post_install do |installer|
   end
   # Patch AMCoreAudio for macOS 15
   puts "🔨 Patching AMCoreAudio for macOS 15..."
-  amcoreaudio_files = Dir.glob('Pods/AMCoreAudio/**/*.{m,swift}')
+  amcoreaudio_files = Dir.glob('Pods/AMCoreAudio/**/*.{h,m,swift}')
   amcoreaudio_files.each do |file|
+    begin
+      mode = File.stat(file).mode
+      File.chmod(mode | 0o200, file) # ensure user-writable before patching
+    rescue
+      # Ignore chmod errors and still attempt to patch
+    end
+
     text = File.read(file)
     modified = false
     # Replace deprecated constants
@@ -65,6 +72,7 @@ post_install do |installer|
       'kAudioDevicePropertyHogMode' => 'kAudioDevicePropertyDeviceIsRunningSomewhere',
       'import CoreAudio.AudioHardwareBase' => 'import CoreAudio',
       '@import CoreAudio.AudioHardware;' => '@import CoreAudio;',
+      '@import CoreAudio.AudioHardwareBase;' => '@import CoreAudio;',
       'kAudioHardwareServiceDeviceProperty_VirtualMasterVolume' => 'kAudioHardwareServiceDeviceProperty_VirtualMainVolume',
       'kAudioHardwareServiceDeviceProperty_VirtualMasterBalance' => 'kAudioHardwareServiceDeviceProperty_VirtualMainBalance',
     }

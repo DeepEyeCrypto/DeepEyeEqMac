@@ -9,6 +9,7 @@ import SwiftUI
 import Combine
 
 import Accelerate
+import AudioToolbox
 
 class SpectrumModel: ObservableObject {
     @Published var amplitudes: [CGFloat] = Array(repeating: 0.1, count: 30)
@@ -51,92 +52,97 @@ class SpectrumModel: ObservableObject {
         // Application.engine is a global static, usually safe to read pointer but modify is dangerous.
         // We only read.
         guard let engine = Application.engine else { return }
+
+        let lastSampleTime = Int64(engine.lastSampleTime)
+        guard lastSampleTime > 0 else { return }
         
         // Read latest samples from CircularBuffer
         // We need fftSize samples.
         // CircularBuffer.read(into: ...) requires an AudioBufferList structure.
-        
-        // Prepare ABL
-        var audioBuffer = AudioBuffer(
-            mNumberChannels: 1, // Mono FFT for simplicity
-            mDataByteSize: UInt32(fftSize * MemoryLayout<Float>.size),
-            mData: UnsafeMutableRawPointer.allocate(byteCount: fftSize * MemoryLayout<Float>.size, alignment: MemoryLayout<Float>.alignment)
-        )
-        var bufferList = AudioBufferList(mNumberBuffers: 1, mBuffers: (audioBuffer))
-        
-        let lastSampleTime = Int64(engine.lastSampleTime)
+
         // Read 1024 frames ending at lastSampleTime
         let startRead = max(0, lastSampleTime - Int64(fftSize))
-        
-        let err = engine.buffer.read(into: &bufferList, from: startRead, to: lastSampleTime)
-        
-        if err == .noError {
-            // Process data
-            if let ptr = audioBuffer.mData?.assumingMemoryBound(to: Float.self) {
-                 var timeDomainBuffer = Array(UnsafeBufferPointer(start: ptr, count: fftSize))
-                 performFFT(&timeDomainBuffer)
-            }
+
+        // Prepare mono buffer for FFT input
+        var timeDomainBuffer = [Float](repeating: 0, count: fftSize)
+        timeDomainBuffer.withUnsafeMutableBytes { rawBuffer in
+            guard let baseAddress = rawBuffer.baseAddress else { return }
+
+            var audioBuffer = AudioBuffer(
+                mNumberChannels: 1,
+                mDataByteSize: UInt32(rawBuffer.count),
+                mData: baseAddress
+            )
+            var bufferList = AudioBufferList(mNumberBuffers: 1, mBuffers: audioBuffer)
+
+            let err = engine.buffer.read(into: &bufferList, from: startRead, to: lastSampleTime)
+            guard err == .noError else { return }
+
+            performFFT(&timeDomainBuffer)
         }
-        
-        // Cleanup
-        audioBuffer.mData?.deallocate()
     }
     
     private func performFFT(_ data: inout [Float]) {
          // Windowing
          vDSP_vmul(data, 1, window, 1, &data, 1, vDSP_Length(fftSize))
-         
+
          // Setup split complex buffer
          var real = [Float](repeating: 0, count: fftSize/2)
          var imag = [Float](repeating: 0, count: fftSize/2)
-         var splitComplex = DSPSplitComplex(realp: &real, imagp: &imag)
-         
-         // Pack data: As we are doing Real FFT, we treat input as even/odd points? 
-         // Actually vDSP_ctoz converts interleaved complex to split complex. 
-         // But for Real input, we can cast [Float] to UnsafePointer<DSPComplex> if stride is 2.
-         // Easier: vDSP_fft_zrip takes split complex where input is modified in place.
-         
-         // Copy data to split complex format (Interleaved -> Split)
-         // Treat input as Real data. We use vDSP_ctoz on the data casted.
-         data.withUnsafeBufferPointer { bufferPtr in
-             bufferPtr.baseAddress!.withMemoryRebound(to: DSPComplex.self, capacity: fftSize/2) { complexPtr in
-                 vDSP_ctoz(complexPtr, 2, &splitComplex, 1, vDSP_Length(fftSize/2))
+         var bars: [CGFloat] = []
+
+         real.withUnsafeMutableBufferPointer { realBuffer in
+             imag.withUnsafeMutableBufferPointer { imagBuffer in
+                 guard let realPtr = realBuffer.baseAddress,
+                       let imagPtr = imagBuffer.baseAddress else { return }
+
+                 var splitComplex = DSPSplitComplex(realp: realPtr, imagp: imagPtr)
+
+                 // Pack data (interleaved complex) into split-complex format.
+                 data.withUnsafeBufferPointer { bufferPtr in
+                     guard let baseAddress = bufferPtr.baseAddress else { return }
+                     baseAddress.withMemoryRebound(to: DSPComplex.self, capacity: fftSize/2) { complexPtr in
+                         vDSP_ctoz(complexPtr, 2, &splitComplex, 1, vDSP_Length(fftSize/2))
+                     }
+                 }
+
+                 // FFT
+                 vDSP_fft_zrip(fftSetup, &splitComplex, 1, log2n, FFTDirection(FFT_FORWARD))
+
+                 // Magnitude
+                 var magnitudes = [Float](repeating: 0.0, count: fftSize/2)
+                 vDSP_zvmags(&splitComplex, 1, &magnitudes, 1, vDSP_Length(fftSize/2))
+
+                 // Normalize
+                 var normalizedMags = [Float](repeating: 0.0, count: fftSize/2)
+                 var multiplier = Float(1.0 / Float(fftSize))
+                 vDSP_vsmul(magnitudes, 1, &multiplier, &normalizedMags, 1, vDSP_Length(fftSize/2))
+
+                 // Map to 30 visual bands.
+                 let bandCount = 30
+                 let bandWidth = max(1, (fftSize / 2) / bandCount)
+                 bars.reserveCapacity(bandCount)
+
+                 for i in 0..<bandCount {
+                     let start = i * bandWidth
+                     let end = min(start + bandWidth, normalizedMags.count)
+                     guard start < end else {
+                         bars.append(0)
+                         continue
+                     }
+
+                     let slice = normalizedMags[start..<end]
+                     let avg = slice.reduce(0, +) / Float(slice.count)
+
+                     // Log scale for height; map dB (-60...0) to 0...1.
+                     let db = 10.0 * log10(avg + 0.0001)
+                     let normalizedHeight = CGFloat(max(0.0, (db + 60.0) / 60.0))
+                     bars.append(normalizedHeight)
+                 }
              }
          }
-         
-         // FFT
-         vDSP_fft_zrip(fftSetup, &splitComplex, 1, log2n, FFTDirection(FFT_FORWARD))
-         
-         // Magnitude
-         var magnitudes = [Float](repeating: 0.0, count: fftSize/2)
-         vDSP_zvmags(&splitComplex, 1, &magnitudes, 1, vDSP_Length(fftSize/2))
-         
-         // Normalize
-         var normalizedMags = [Float](repeating: 0.0, count: fftSize/2)
-         var multiplier = Float(1.0 / Float(fftSize))
-         vDSP_vsmul(magnitudes, 1, &multiplier, &normalizedMags, 1, vDSP_Length(fftSize/2))
-         
-         // Map to Bands (30 bars)
-         // Simple linear averaging or log mapping. Log is better for audio.
-         // For 'DeepEye' MVP, let's do a simple downsampling.
-         
-         var bars: [CGFloat] = []
-         let bandWidth = (fftSize / 2) / 30
-         
-         for i in 0..<30 {
-             let start = i * bandWidth
-             let end = start + bandWidth
-             let slice = normalizedMags[start..<end]
-             let sum = slice.reduce(0, +)
-             let avg = sum / Float(slice.count)
-             
-             // Log scale for height
-             let db = 10 * log10(avg + 0.0001) // avoid log(0)
-             // Map dB (-60...0) to 0...1
-             let normalizedHeight = CGFloat(max(0, (db + 60) / 60))
-             bars.append(normalizedHeight)
-         }
-         
+
+         guard !bars.isEmpty else { return }
          DispatchQueue.main.async {
              self.amplitudes = bars
          }
